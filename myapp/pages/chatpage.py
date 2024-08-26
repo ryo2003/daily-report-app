@@ -9,8 +9,7 @@ else:
 # 定数定義
 USER_NAME = "user"
 ASSISTANT_NAME = "assistant"
-MORIAGE_YAKU_NAME = "moriage_yaku"
-
+MORIAGE_YAKU_NAME ="moriage"
 # チャットログを保存したセッション情報を初期化
 if "chat_log" not in st.session_state:
     st.session_state.chat_log = []
@@ -39,4 +38,3 @@ if user_msg:
     # セッションにチャットログを追加
     st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
     st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": user_msg})
-    st.session_state.chat_log.append({"name": MORIAGE_YAKU_NAME, "msg": user_msg})
