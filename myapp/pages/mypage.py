@@ -1,15 +1,54 @@
+
 import streamlit as st
+from streamlit_calendar import calendar
+import json
+calendar_options = {
+    "selectable": True,
+}
 
-st.markdown("""## My Profile
+with open('demo_data.json', 'r') as f:
+    calendar_events = json.load(f)
 
-my name is **クラッシャーバンバンFuji**
+json_open = open("demo_data.json", 'r')
+calendar_events = json.load(json_open)
+custom_css="""
+    .fc-event-past {
+        opacity: 0.8;
+    }
+    .fc-event-time {
+        font-style: italic;
+    }
+    .fc-event-title {
+        font-weight: 700;
+    }
+    .fc-toolbar-title {
+        font-size: 2rem;
+    }
+"""
 
-my favorite programming language is <strong>Python</strong>
+calendar = calendar(events=calendar_events, options=custom_css, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
 
+# 初期状態の設定
+if 'show_modal' not in st.session_state:
+    st.session_state['show_modal'] = False
 
-My Special moves are F-U and DDT.
+# eventClick コールバックの処理
+if calendar.get("eventClick"):
+    event_data = calendar["eventClick"]["event"]
+    st.session_state['show_modal'] = True
+    st.session_state['event_data'] = event_data  # イベントデータを保存
 
-Streamlit is awesome
+# ダイアログの表示制御
+if st.session_state.get('show_modal'):
+    event_data = st.session_state['event_data']
+    st.write("### イベント詳細")
+    st.write(f"タイトル: {event_data['title']}")
+    st.write(f"開始時間: {event_data['start']}")
+    st.write(f"終了時間: {event_data['end']}")
+    
+    # 閉じるボタン
+    if st.button("閉じる"):
+        st.session_state['show_modal'] = False  # モーダルを閉じる
 
-Here is Streamlit's [official website](https://streamlit.io/)
-""")
+    if st.button("ページ遷移"):
+        st.switch_page("pages/chatpage.py")

@@ -1,6 +1,11 @@
 import streamlit as st
 
-# st.write()はMarkdown表記対応
-st.write('# headline300')
-# 以下のように明示的に書くことも可能
-st.markdown('# headline2')
+st.set_page_config(page_title="Streamlit App", page_icon=":shark:")
+
+
+top_page = st.Page(page="pages/toppage.py", title="Top", icon=":material/home:")
+my_profile = st.Page(page="pages/mypage.py", title="mypage", icon=":material/open_with:")
+search = st.Page(page="pages/search_nippo.py", title="search", icon=":material/home:")
+chat = st.Page(page="pages/chatpage.py", title="chat", icon=":material/home:")
+pg = st.navigation([top_page, my_profile,search,chat])
+pg.run()
