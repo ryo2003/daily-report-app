@@ -23,6 +23,5 @@ services:
       - ./db:/data/db
       - ./configdb:/data/configdb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      -  MONGO_URI=mongodb://root:password@mongo:27017/mydatabase?authSource=admin
 
