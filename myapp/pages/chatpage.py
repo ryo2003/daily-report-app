@@ -1,7 +1,11 @@
 import streamlit as st
 
-st.title("Streamlitのチャットサンプル")
 
+if st.session_state.get('event_data'):
+    event_data = st.session_state['event_data']
+    st.title(f"{event_data['title']}のチャットサンプル")
+else:
+    st.title("NoEventチャットサンプル")
 # 定数定義
 USER_NAME = "user"
 ASSISTANT_NAME = "assistant"
@@ -17,6 +21,7 @@ avator_img_dict = {
 }
 
 user_msg = st.chat_input("ここにメッセージを入力")
+
 if user_msg:
     # 以前のチャットログを表示
     for chat in st.session_state.chat_log:
