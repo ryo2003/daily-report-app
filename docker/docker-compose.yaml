@@ -12,4 +12,17 @@ services:
       - PYTHONUNBUFFERED=1
     command: streamlit run app.py --server.port 8501
     restart: always
+  mongodb:
+    container_name: "mongodb"
+    hostname: mongodb
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db:/data/db
+      - ./configdb:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
 
