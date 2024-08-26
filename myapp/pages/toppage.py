@@ -1,17 +1,12 @@
 import streamlit as st
-st.title("This is a title")
-st.write("Hello World!")
 
-st.markdown("""## This is a markdown
+st.title("お疲れ様です。日報管理システムへようこそ！")
 
-### Streamlit is awesome!
-マークダウンでかけて便利！
-- リスト
-> 引用
 
-```python
-import streamlit as st
-st.title("This is a title")
-st.write("Hello World!")
-``` 
-""")
+if st.button("マイページ"):
+    # クエリパラメータを設定して、search.pyページに遷移
+    st.switch_page("pages/mypage.py")
+
+if st.button("日報検索ページ"):
+    # クエリパラメータを設定して、search.pyページに遷移
+    st.switch_page("pages/search_nippo.py")
