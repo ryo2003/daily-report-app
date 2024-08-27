@@ -2,3 +2,4 @@
 /configdb/
 docker/db/
 myapp/utils/.env
+**/__pycache__/
