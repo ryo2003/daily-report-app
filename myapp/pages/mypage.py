@@ -1,7 +1,11 @@
 
 import streamlit as st
 from streamlit_calendar import calendar
+from pymongo import MongoClient
 import json
+import streamlit.components.v1 as stc
+
+
 calendar_options = {
     "selectable": True,
 }
@@ -37,6 +41,7 @@ if calendar.get("eventClick"):
     event_data = calendar["eventClick"]["event"]
     st.session_state['show_modal'] = True
     st.session_state['event_data'] = event_data  # イベントデータを保存
+    st.switch_page("pages/Event.py")
 
 # ダイアログの表示制御
 if st.session_state.get('show_modal'):
@@ -46,9 +51,7 @@ if st.session_state.get('show_modal'):
     st.write(f"開始時間: {event_data['start']}")
     st.write(f"終了時間: {event_data['end']}")
     
-    # 閉じるボタン
-    if st.button("閉じる"):
-        st.session_state['show_modal'] = False  # モーダルを閉じる
 
     if st.button("ページ遷移"):
         st.switch_page("pages/chatpage.py")
+
