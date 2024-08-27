@@ -11,7 +11,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      /bin/bash -c "
+      /bin/bash "
       pip install --no-cache-dir -r /app/docker/requirements.txt &&
       streamlit run app.py --server.port=8501 --server.address=0.0.0.0
       "
