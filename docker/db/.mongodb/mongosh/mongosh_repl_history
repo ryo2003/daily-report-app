@@ -1,2 +1,25 @@
+db.user.find()
+db.user.finf()
+show collections
+db.your_collection_name.find().pretty()
+use nippoDatabase
+show dbs
+db.user.insertOne({user_name: "user2", password: "password", nippo: [], good: [], bookmark: []});
+db.user.insertOne({user_name: "user1", password: "password", nippo: [], good: [], bookmark: []});
+db.user.insertOne({user_name: "Bob", password: "password", nippo: [], good: [], bookmark: []});
+db.user.insertOne({user_name: "Alice", password: "password", nippo: [], good: [], bookmark: []});
+db.user.insertOne({user_name: "su", password: "password", nippo: [], good: [], bookmark: []});
+db.user.createIndex({ user_name: 1 });
+db.createCollection("user");
+use nippoDatabase;
+  22:55
+酒向 颯也
+db.createCollection("user");
+use nippoDatabase;
+show dbs
+db.mycollection.find()
+show collections
+use mydb
+show dbs
 db.mycollection.insertMany([{"name" : "Mary", "pet": "dog"}, {"name" : "John", "pet": "cat"}, {"name" : "Robert", "pet": "bird"}])
 use mydb
