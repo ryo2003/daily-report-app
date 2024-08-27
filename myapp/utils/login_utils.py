@@ -1,8 +1,11 @@
 import streamlit as st
 import pymongo
 from bson import ObjectId
-
-client = pymongo.MongoClient("mongodb+srv://sakair0903:glW4l6U3XgTXCqoL@cluster-ootsuka.qpezv.mongodb.net/")  # ここでURIを指定
+from dotenv import load_dotenv
+import os
+load_dotenv()
+mongo_URI = os.getenv("MONGO_URI")
+client = pymongo.MongoClient(mongo_URI)  # ここでURIを指定
 db = client["mydb"]  # 使用するデータベース名
 collection = db["user"]  # 使用するコレクション名
 
