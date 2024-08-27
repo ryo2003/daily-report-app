@@ -1,4 +1,10 @@
+import sys
+import os
+
 import streamlit as st
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+
+from chat import create_question
 
 
 if st.session_state.get('event_data'):
@@ -29,6 +35,7 @@ if user_msg:
             st.write(chat["msg"])
 
     # 最新のメッセージを表示
+    
     assistant_msg = "もう一度入力してください"
     with st.chat_message(USER_NAME):
         st.write(user_msg)
