@@ -21,8 +21,8 @@ def create_question(system_prompt: str,user_prompt: str) -> str:
     response = client.chat.completions.create(
         model=model_name , # model = "deployment_name".
         messages=[
-            {"role": "system", "content": "Assistant is a large language model trained by OpenAI."},
-            {"role": "user", "content": "Who were the founders of Microsoft?"}
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
         ]
     )
     return response.choices[0].message.content

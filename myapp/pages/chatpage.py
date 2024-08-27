@@ -34,9 +34,7 @@ if user_msg:
         with st.chat_message(chat["name"], avatar=avator):
             st.write(chat["msg"])
 
-    # 最新のメッセージを表示
-    
-    assistant_msg = "もう一度入力してください"
+    assistant_msg=create_question("",user_msg)
     with st.chat_message(USER_NAME):
         st.write(user_msg)
     with st.chat_message(ASSISTANT_NAME):
