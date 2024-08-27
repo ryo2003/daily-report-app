@@ -1,4 +1,5 @@
 import streamlit as st
+
 # ページのタイトル
 st.title("日報作成")
 
