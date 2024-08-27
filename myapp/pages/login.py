@@ -8,7 +8,6 @@ from login_utils import login
 # タイトル
 st.title('日報管理システムにログインする')
 
-st.write("現在はID=abc ,パスワード=123456のみ対応しています")
 # ログインIDの入力ボックス
 login_id = st.text_input('ログインID:')
 
@@ -21,4 +20,3 @@ password = st.text_input('パスワード:', type='password')
 if st.button('ログイン'):
     # ログイン処理の部分（例: IDとパスワードのチェックなど)
     login(login_id,password)
-    
