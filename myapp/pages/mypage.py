@@ -28,6 +28,9 @@ custom_css="""
 
 calendar = calendar(events=calendar_events, options=custom_css, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
 
+if st.session_state.get("success_id"):
+    st.write("abc")
+
 # 初期状態の設定
 if 'show_modal' not in st.session_state:
     st.session_state['show_modal'] = False
