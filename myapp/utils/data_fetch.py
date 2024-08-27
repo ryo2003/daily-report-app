@@ -28,7 +28,7 @@ def get_username(user_id):
     user = users_collection.find_one({"_id": user_id})
     
     # Return the username if found, otherwise return None
-    return user["username"] if user else None
+    return user["user_name"] if user else None
 
 
 
