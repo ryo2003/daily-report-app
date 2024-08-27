@@ -7,12 +7,12 @@ db = client["mydb"]  # Replace with your database name
 
 def get_nippo():
     collection = db["nippo"]  # Replace with your collection name
-    nippo =  list(collection.find()) 
+    nippo =  collection.find() 
     return nippo
 
 def get_user():
     collection = db["user"]  # Replace with your collection name
-    users =  list(collection.find()) 
+    users =  collection.find()
     return users
 
 
