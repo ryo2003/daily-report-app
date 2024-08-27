@@ -2,8 +2,18 @@
 import streamlit as st
 from streamlit_calendar import calendar
 import json
+import streamlit.components.v1 as stc
+
+
+
+
 calendar_options = {
-    "selectable": True,
+            
+    "headerToolbar": {
+        "left": "today prev,next",
+        "center": "title",
+        "right": "dayGridDay,dayGridWeek,dayGridMonth",
+    },
 }
 
 with open('demo_data.json', 'r') as f:
@@ -26,7 +36,7 @@ custom_css="""
     }
 """
 
-calendar = calendar(events=calendar_events, options=custom_css, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
+calendar = calendar(events=calendar_events, options=calendar_options, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
 
 if st.session_state.get("success_id"):
     st.write("abc")
@@ -40,6 +50,7 @@ if calendar.get("eventClick"):
     event_data = calendar["eventClick"]["event"]
     st.session_state['show_modal'] = True
     st.session_state['event_data'] = event_data  # イベントデータを保存
+    st.switch_page("pages/Event.py")
 
 # ダイアログの表示制御
 if st.session_state.get('show_modal'):
@@ -49,17 +60,4 @@ if st.session_state.get('show_modal'):
     st.write(f"開始時間: {event_data['start']}")
     st.write(f"終了時間: {event_data['end']}")
 
-    option = st.radio(
-        "日報の作成方法を選んでください:",
-        ('手動で作成', '対話で作成'))
-
-# ボタンがクリックされた時の処理
-    if st.button("日報を作成"):
-        if option == '手動で作成':
-            st.switch_page("pages/createbyhands.py")
-        elif option == '対話で作成':
-            st.switch_page("pages/chatpage.py")
-    # 閉じるボタン
-    if st.button("閉じる"):
-        st.session_state['show_modal'] = False  # モーダルを閉じる
 
