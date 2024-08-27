@@ -1,8 +1,13 @@
 import streamlit as st
 from pymongo import MongoClient
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
+mongo_URI = os.getenv("MONGO_URI")
+
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://sakair0903:glW4l6U3XgTXCqoL@cluster-ootsuka.qpezv.mongodb.net/")
+client = MongoClient(mongo_URI)
 db = client["mydb"]  # Replace with your database name
 
 def get_nippo():
