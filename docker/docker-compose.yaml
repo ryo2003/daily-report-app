@@ -10,7 +10,11 @@ services:
       - ../myapp:/app       # Maps the current directory to /app in the container
     environment:
       - PYTHONUNBUFFERED=1
-    command: streamlit run app.py --server.port 8501
+    command: >
+      /bin/bash "
+      pip install --no-cache-dir -r /app/docker/requirements.txt &&
+      streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+      "
     restart: always
   mongodb:
     container_name: "mongodb"
