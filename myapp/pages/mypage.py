@@ -45,10 +45,18 @@ if st.session_state.get('show_modal'):
     st.write(f"タイトル: {event_data['title']}")
     st.write(f"開始時間: {event_data['start']}")
     st.write(f"終了時間: {event_data['end']}")
-    
+
+    option = st.radio(
+        "日報の作成方法を選んでください:",
+        ('手動で作成', '対話で作成'))
+
+# ボタンがクリックされた時の処理
+    if st.button("日報を作成"):
+        if option == '手動で作成':
+            st.switch_page("pages/createbyhands.py")
+        elif option == '対話で作成':
+            st.switch_page("pages/chatpage.py")
     # 閉じるボタン
     if st.button("閉じる"):
         st.session_state['show_modal'] = False  # モーダルを閉じる
 
-    if st.button("ページ遷移"):
-        st.switch_page("pages/chatpage.py")
