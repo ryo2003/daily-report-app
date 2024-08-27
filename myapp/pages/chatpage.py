@@ -30,6 +30,7 @@ user_msg = st.chat_input("ここにメッセージを入力")
 if user_msg:
     # 以前のチャットログを表示
     for chat in st.session_state.chat_log:
+        print("chat",chat)
         avator = avator_img_dict.get(chat["name"], None)
         with st.chat_message(chat["name"], avatar=avator):
             st.write(chat["msg"])
@@ -42,4 +43,4 @@ if user_msg:
 
     # セッションにチャットログを追加
     st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
-    st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": user_msg})
+    st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
