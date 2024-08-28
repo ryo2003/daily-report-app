@@ -106,3 +106,51 @@ def pop_chatlog(chatlogId):
         {"$pop": {"log_data": 1}}
     )
     return
+
+def make_nippo_data(nippo : str, chatlogId, eventId):
+    print("make_nippo_data")
+    print("nippo: ",nippo)
+
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+
+    collection = db['event']
+    userId = collection.find_one({"_id": eventId})["user_id"]
+    customer = collection.find_one({"_id": eventId})["customer"]
+
+    print("userId",userId)
+    print("customer",customer)
+
+    collection = db['nippo']
+    res = collection.insert_one({
+        "user_id": userId,
+        "chatlog_id": chatlogId,
+        "event_id": eventId,
+        "contents": nippo,
+        "good" : [],
+        "bookmark" : [],
+        "purpose": "",
+        "customer": customer,
+    })
+
+    nippo_id = res.inserted_id
+    collection = db['user']
+    collection.update_one(
+        {"_id": userId},
+        {"$push": {"nippo_id": nippo_id}}
+    )
+
+    collection = db['event']
+    collection.update_one(
+        {"_id": eventId},
+        {"$set": {"nippo_id": nippo_id}}
+    )
+
+    collection = db['chat_log']
+    collection.update_one(
+        {"_id": chatlogId},
+        {"$set": {"nippo_id": nippo_id}}
+    )
+    
+    return
