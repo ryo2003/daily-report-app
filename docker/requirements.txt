@@ -3,3 +3,5 @@ streamlit-calendar
 pymongo
 openai
 python-dotenv
+beanie
+asyncio
