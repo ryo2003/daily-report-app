@@ -6,7 +6,7 @@ from bson import ObjectId
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog
+from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog, make_nippo_data
 
 def main():
 
@@ -27,8 +27,9 @@ def main():
     }
 
     if 'initialized' not in st.session_state or not st.session_state.initialized:
-        if 'chatlog_id' not in st.session_state:
+        if 'chatlog_id' not in st.session_state or 'event_id' not in st.session_state:
             st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
+            st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
         
         print("st.session_state.chatlog_id",st.session_state.chatlog_id)
         print("get_chatlog(st.session_state.chatlog_id)",get_chatlog(st.session_state.chatlog_id))
@@ -54,8 +55,10 @@ def main():
     user_msg = st.chat_input("ここにメッセージを入力! 日報を作成したいときは「日報作成」と入力してください。")
 
     if user_msg:
-
-        if len(st.session_state.chat_log)//2 >= 10 or user_msg == "日報作成":
+        if user_msg == "決定":
+            make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.chatlog_id, st.session_state.event_id)
+            assistant_msg = "日報を保存しました。"
+        elif len(st.session_state.chat_log)//2 >= 10 or user_msg == "日報作成":
             if len(st.session_state.chat_log) < 2:
                 assistant_msg = "コンテンツがありません"
             else:
@@ -70,7 +73,6 @@ def main():
         # 以前のチャットログを表示
         for chat in st.session_state.chat_log:
             print("chat",chat)
-            print()
             avator = avator_img_dict.get(chat["name"], None)
             with st.chat_message(chat["name"]):
                 st.write(chat["msg"])
