@@ -2,9 +2,11 @@ import sys
 import os
 import time
 import streamlit as st
+from bson import ObjectId
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from chat import create_question, create_nippo, get_chatlog
+from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog
 
 def main():
 
@@ -25,11 +27,19 @@ def main():
     }
 
     if 'initialized' not in st.session_state or not st.session_state.initialized:
+        if 'chatlog_id' not in st.session_state:
+            st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
+        
+        print("st.session_state.chatlog_id",st.session_state.chatlog_id)
+        print("get_chatlog(st.session_state.chatlog_id)",get_chatlog(st.session_state.chatlog_id))
+
         # チャットログを保存したセッション情報を初期化
-        st.session_state.chat_log = []
+        st.session_state.chat_log = get_chatlog(st.session_state.chatlog_id)
 
         if st.session_state.chat_log == []:
-            st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": "お疲れ様です。今回の営業の目的を教えてください。"})
+            assistant_msg = "お疲れ様です。今回の営業の目的を教えてください。"
+            st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
+            add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
     
         for chat in st.session_state.chat_log:
@@ -41,9 +51,22 @@ def main():
         st.session_state.initialized = True
 
     
-    user_msg = st.chat_input("ここにメッセージを入力!!!")
+    user_msg = st.chat_input("ここにメッセージを入力! 日報を作成したいときは「日報作成」と入力してください。")
 
     if user_msg:
+
+        if len(st.session_state.chat_log)//2 >= 10 or user_msg == "日報作成":
+            if len(st.session_state.chat_log) < 2:
+                assistant_msg = "コンテンツがありません"
+            else:
+                print("st.session_state.chat_log",st.session_state.chat_log)
+                assistant_msg=create_nippo(st.session_state.chat_log[:-1])
+                st.session_state.chat_log.pop()
+                pop_chatlog(st.session_state.chatlog_id)
+                print("st.session_state.chat_log",st.session_state.chat_log)
+        else:
+            assistant_msg=create_question(st.session_state.chat_log)
+
         # 以前のチャットログを表示
         for chat in st.session_state.chat_log:
             print("chat",chat)
@@ -51,12 +74,7 @@ def main():
             avator = avator_img_dict.get(chat["name"], None)
             with st.chat_message(chat["name"]):
                 st.write(chat["msg"])
-            
-
-        if len(st.session_state.chat_log)//2 >= 3 or user_msg == "日報作成":
-            assistant_msg=create_nippo(st.session_state.chat_log)
-        else:
-            assistant_msg=create_question(st.session_state.chat_log)
+                
 
         with st.chat_message(USER_NAME):
             st.write(user_msg)
@@ -68,6 +86,8 @@ def main():
         st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
         st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
         print("st.session_state.chat_log",st.session_state.chat_log)
+        add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
+        add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
 if __name__ == "__main__":
     main()
