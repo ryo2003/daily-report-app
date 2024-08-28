@@ -1,13 +1,28 @@
 import streamlit as st
 from pymongo import MongoClient
+import asyncio
+from beanie import Document, init_beanie, PydanticObjectId
+from motor.motor_asyncio import AsyncIOMotorClient
 
+import pymongo
 from dotenv import load_dotenv
 import os
 load_dotenv()
-mongo_URI = os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI")
+
+class Nippo(Document):
+    user_id: PydanticObjectId
+    contents: str
+    good: list
+    bookmark: list
+    purpose: str
+    customer: str
+
+    class Settings:
+        name = "nippo"
 
 # Connect to MongoDB
-client = MongoClient(mongo_URI)
+client = MongoClient(MONGO_URI)
 db = client["mydb"]  # Replace with your database name
 
 def get_nippo():
@@ -34,5 +49,28 @@ def get_id_from_username(username):
     users_collection = db["user"]
     user = users_collection.find_one({"user_name": username})
     return user["_id"]
+
+# Initialize MongoDB client
+def get_client(event_loop=None):
+    if event_loop:
+        client = AsyncIOMotorClient(
+            MONGO_URI,
+            io_loop=event_loop,
+        )
+    else:
+        client = AsyncIOMotorClient(
+            MONGO_URI,
+        )
+    return client
+
+# Initialize the database with the given collections
+async def init_database(client, models=[Nippo]):
+    database = client.get_database(name='mydb')
+    await init_beanie(database=database, document_models=models)
+
+async def fetch_nippo_async(nippo_model=Nippo):
+    nippo_data = await nippo_model.find(fetch_links=True).to_list()
+    return nippo_data
+
 
 
