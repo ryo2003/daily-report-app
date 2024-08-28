@@ -108,6 +108,7 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
     db = client['mydb']
 
     collection = db['event']
+
     nippo_id = collection.find_one({"_id": eventId})["nippo_id"]
     if nippo_id is not None:
         collection = db['nippo']
@@ -129,6 +130,7 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
         "contents": nippo,
         "good" : [],
         "bookmark" : [],
+
         "purpose": purpose,
         "customer": customer,
     }
