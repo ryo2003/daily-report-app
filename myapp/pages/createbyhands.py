@@ -34,9 +34,9 @@ next_visit_purpose = st.selectbox(
     ["選択してください", "初回訪問", "精査", "提案", "クローズ", "関係構築", "フォロー", "納品","その他"]
 )
 
-nippo_containts = "訪問時間: " +visit_time+"/n 同行者名: " +companion_name+"/n お客様の課題: "+customer_issues+"/n 次回訪問日程: "+next_visit_schedule+"/n 次回訪問目的: "+next_visit_purpose
-
 nippo_temporary = {"企業名":company_name,"訪問時間":visit_time,"訪問目的":visit_purpose,"同行者名":companion_name,"お客様の課題":customer_issues,"次回訪問日程":next_visit_schedule,"次回訪問目的":next_visit_purpose}
+
+nippo_containts = "企業名:"+nippo_temporary['企業名']+"訪問時間:+nippo_temporary['訪問時間']"+"訪問目的: "+nippo_temporary['訪問目的']+"同行者名: "+nippo_temporary['同行者名']+"お客様の課題:"+nippo_temporary['お客様の課題']+"次回訪問日程:+nippo_temporary['次回訪問日程']"
 submit_data = {"企業名":company_name,"訪問目的":visit_purpose,"内容":nippo_containts}
 if st.button("送信"):
     st.session_state['getconsent'] = True
@@ -56,5 +56,5 @@ if st.session_state.get('getconsent'):
         st.write(f"次回訪問日程: {nippo_temporary['次回訪問日程']}")
 
         if st.button("送信する"):
-            
+            submit_byhands(submit_data)
             st.write("送信しました")

@@ -9,7 +9,7 @@ from login_utils import login
 st.title('日報管理システムにログインする')
 
 # ログインIDの入力ボックス
-login_id = st.text_input('ログインID:')
+login_id = st.text_input("ユーザ名:")
 
 # パスワードの入力ボックス
 password = st.text_input('パスワード:', type='password')
