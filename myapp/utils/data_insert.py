@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
 

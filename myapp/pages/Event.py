@@ -1,12 +1,17 @@
+import sys
+import os
 import streamlit as st
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+
+from data_insert import insert_chat
 
 if st.session_state.get('event_data'):
     event_data = st.session_state['event_data']
     title = event_data['title']
     start_time = event_data['start']
     end_time = event_data['end']
-    event_id = event_data["event"]
+    # event_id = event_data["event_id"]
     st.title(f"イベント:{title}")
     st.write("### イベント詳細")
     st.write(f"開始時間: {start_time}")

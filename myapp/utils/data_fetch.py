@@ -30,5 +30,8 @@ def get_username(user_id):
     # Return the username if found, otherwise return None
     return user["user_name"] if user else None
 
+def get_calendar(user_id):
+    collection = db["calendar"]
+    calendar = collection.find_one({"_id": user_id})
 
-
+    return calendar
