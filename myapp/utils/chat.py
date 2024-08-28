@@ -9,8 +9,6 @@ from bson import ObjectId
 load_dotenv()
 
 
-default_question = ['お疲れ様です。今回の営業の目的を教えてください。']
-
 def create_question(chatlog: list[dict]) -> str:
     return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
@@ -57,20 +55,14 @@ def create_nippo(chatlog: list[dict]) -> str:
     except Exception as e:
         return 'エラーが発生しました。'
 
-    
-
     return response.choices[0].message.content
 
 def get_chatlog(chatlogId) -> list:
+    print("call get_chatlog!!!!")
     mongo_uri = os.getenv('MONGO_URI')
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
-
-    print("call get_chatlog!!!!")
-    print("chatlogId",chatlogId)
-    print('dtype',type(chatlogId))
-
 
     chatlog = collection.find_one({"_id": chatlogId})
 
@@ -107,7 +99,7 @@ def pop_chatlog(chatlogId):
     )
     return
 
-def make_nippo_data(nippo : str, chatlogId, eventId):
+def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : ObjectId = None):
     print("make_nippo_data")
     print("nippo: ",nippo)
 
@@ -116,6 +108,14 @@ def make_nippo_data(nippo : str, chatlogId, eventId):
     db = client['mydb']
 
     collection = db['event']
+    nippo_id = collection.find_one({"_id": eventId})["nippo_id"]
+    if nippo_id is not None:
+        collection = db['nippo']
+        if collection.find_one({"_id": nippo_id}) is not None:
+            collection.delete_one({"_id": nippo_id})
+    
+    collection = db['event']
+
     userId = collection.find_one({"_id": eventId})["user_id"]
     customer = collection.find_one({"_id": eventId})["customer"]
 
@@ -123,16 +123,18 @@ def make_nippo_data(nippo : str, chatlogId, eventId):
     print("customer",customer)
 
     collection = db['nippo']
-    res = collection.insert_one({
+    nippo_data = {
         "user_id": userId,
-        "chatlog_id": chatlogId,
         "event_id": eventId,
         "contents": nippo,
         "good" : [],
         "bookmark" : [],
-        "purpose": "",
+        "purpose": purpose,
         "customer": customer,
-    })
+    }
+    if chatlogId is not None:
+        nippo_data["chatlog_id"] = chatlogId
+    res = collection.insert_one(nippo_data)
 
     nippo_id = res.inserted_id
     collection = db['user']
