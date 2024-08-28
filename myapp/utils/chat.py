@@ -12,7 +12,7 @@ load_dotenv()
 default_question = ['お疲れ様です。今回の営業の目的を教えてください。']
 
 def create_question(chatlog: list[dict]) -> str:
-    # return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
+    return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
     api_key = os.getenv('API_KEY')
@@ -36,7 +36,7 @@ def create_question(chatlog: list[dict]) -> str:
     return response.choices[0].message.content
 
 def create_nippo(chatlog: list[dict]) -> str:
-    # return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
+    return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
     api_key = os.getenv('API_KEY')
@@ -67,9 +67,42 @@ def get_chatlog(chatlogId) -> list:
     db = client['mydb']
     collection = db['chat_log']
 
-    chatlog = collection.find_one({"_id": ObjectId(chatlogId)})
+    print("call get_chatlog!!!!")
+    print("chatlogId",chatlogId)
+    print('dtype',type(chatlogId))
+
+
+    chatlog = collection.find_one({"_id": chatlogId})
+
+    print("chatlog",chatlog)
 
     if chatlog is None:
+        print("chatlog is None")
         return []
     
-    return chatlog.get("event", [])
+    return chatlog.get("log_data", [])
+
+def add_chatlog(chatlogId, chatlog):
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    collection.update_one(
+        {"_id": chatlogId},
+        {"$push": {"log_data": chatlog}},
+        upsert=True  # ドキュメントが存在しない場合は新規作成
+    )
+    return
+
+def pop_chatlog(chatlogId):
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    collection.update_one(
+        {"_id": chatlogId},
+        {"$pop": {"log_data": 1}}
+    )
+    return
