@@ -1,18 +1,20 @@
 import streamlit as st
 import pymongo
-from bson import ObjectId
 from dotenv import load_dotenv
 import os
+import sys
 load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
 client = pymongo.MongoClient(mongo_URI)  # ここでURIを指定
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+from data_fetch import get_id_from_username
+
 db = client["mydb"]  # 使用するデータベース名
 collection = db["user"]  # 使用するコレクション名
 
-def check_loginid_exists(loginid):
+def check_username_exists(username):
     # クエリでloginidが存在するかを検索
-    id_object = ObjectId(loginid)
-    query = {"_id": id_object}
+    query = {"user_name": username}
     result = collection.find_one(query)
 
     # 結果を判定
@@ -21,9 +23,9 @@ def check_loginid_exists(loginid):
     else:
         return False
     
-def check_correctpassword(loginid,password):
-    if check_loginid_exists(loginid):
-        user = collection.find_one({"_id": ObjectId(loginid)})
+def check_correctpassword(username,password):
+    if check_username_exists(username):
+        user = collection.find_one({"user_name":username})
         realpass = user.get("password")
 
         if realpass == password:
@@ -31,20 +33,19 @@ def check_correctpassword(loginid,password):
         else:
             return False
         
-def login(login_id,password):
+def login(username,password):
 
     try:
-        check_loginid_exists(login_id)  
-        #実際にはdb内にあるかを判定する
+        check_username_exists(username)  
 
     except:
-        st.error("ログインIDがデータベースに存在していません")
+        st.error("ユーザがデータベースに存在していません")
 
     else:
-        if check_correctpassword(login_id,password):
-            st.session_state["success_id"] = login_id
+        if check_correctpassword(username,password):
+            st.session_state["success_id"] = get_id_from_username(username)
             st.success("ログイン成功!")
             st.switch_page("pages/toppage.py")
         else:
-            st.error("ログインIDまたはパスワードが間違っています。")
+            st.error("ユーザ名またはパスワードが間違っています。")
 

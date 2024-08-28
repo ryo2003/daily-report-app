@@ -1,15 +1,15 @@
 import streamlit as st
 import sys
 import os
-from bson import ObjectId
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from login_utils import login
+
 
 # タイトル
 st.title('日報管理システムにログインする')
 
 # ログインIDの入力ボックス
-login_id = st.text_input('ログインID:')
+login_id = st.text_input("ユーザ名:")
 
 # パスワードの入力ボックス
 password = st.text_input('パスワード:', type='password')
