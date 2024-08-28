@@ -27,5 +27,7 @@ services:
       - ./db:/data/db
       - ./configdb:/data/configdb
     environment:
+
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+

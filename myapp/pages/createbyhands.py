@@ -56,5 +56,5 @@ if st.session_state.get('getconsent'):
         st.write(f"次回訪問日程: {nippo_temporary['次回訪問日程']}")
 
         if st.button("送信する"):
-            submit_byhands(submit_data)
+            
             st.write("送信しました")
