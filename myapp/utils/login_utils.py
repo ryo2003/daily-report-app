@@ -2,9 +2,12 @@ import streamlit as st
 import pymongo
 from dotenv import load_dotenv
 import os
+import sys
 load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
 client = pymongo.MongoClient(mongo_URI)  # ここでURIを指定
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+from data_fetch import get_id_from_username
 
 db = client["mydb"]  # 使用するデータベース名
 collection = db["user"]  # 使用するコレクション名
@@ -40,7 +43,7 @@ def login(username,password):
 
     else:
         if check_correctpassword(username,password):
-            st.session_state["success_id"] = username
+            st.session_state["success_id"] = get_id_from_username(username)
             st.success("ログイン成功!")
             st.switch_page("pages/toppage.py")
         else:
