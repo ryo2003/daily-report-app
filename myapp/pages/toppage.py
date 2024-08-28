@@ -3,7 +3,7 @@ import streamlit as st
 
 if st.session_state.get("success_id"):
     userid = st.session_state.get("success_id")
-    st.write("お疲れ様です。userid:" +userid+"さん。日報管理システムへようこそ!")
+    st.write("お疲れ様です、"+userid+"さん。日報管理システムへようこそ!")
 
 
 if st.button("マイページ"):
