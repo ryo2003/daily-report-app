@@ -27,4 +27,5 @@ services:
       - ./db:/data/db
       - ./configdb:/data/configdb
     environment:
-      -  MONGO_URI=mongodb+srv://sakair0903:glW4l6U3XgTXCqoL@cluster-ootsuka.qpezv.mongodb.net/
+      -  MONGO_INITDB_ROOT_USERNAME: root
+      -  MONGO_INITDB_ROOT_PASSWORD: password

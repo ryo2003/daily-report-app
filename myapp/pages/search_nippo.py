@@ -31,3 +31,79 @@ if search_button :
     st.write("まだ検索用の関数が作られていないためエラーがでます")
     search_result = utils.search(selected_name,selected_company,selected_purpose)
     st.write(search_result)
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+from data_fetch import get_nippo, get_username
+from bson import ObjectId
+
+
+# Fetch data from MongoDB
+posts = get_nippo()# Fetch all documents from the 'nippo' collection
+
+st.title("Feed View Example")
+
+import streamlit as st
+
+# Assuming `posts` is a list of dictionaries fetched from MongoDB
+# Example:
+posts = [
+    {
+        "user_id": "66cd29b9157702dc731b0fdd",
+        "chatlog_id": "ObjectId('66cd3f402dc71efad9fbd5e1')",
+        "contents_id": "ObjectId('66cd3f1e2dc71efad9fbd5e0')",
+        "purpose": "Meeting with client",
+        "customer": "HIJ株式会社",
+        "good": [],
+        "bookmark": [],
+        "src_time": "2024-08-27 14:20"
+    },
+    # Add more posts here
+]
+
+# Start building the HTML string for the feed
+result_str = '<html><table style="border: none; width: 100%;">'
+
+for post in posts:
+    user_id = get_username(ObjectId(post.get("user_id")))
+    purpose = post.get("purpose", "No purpose specified")
+    customer = post.get("customer", "No customer specified")
+    src_time = post.get("src_time", "Unknown time")
+    
+    result_str += f'<tr style="border: none; background-color: whitesmoke; margin-bottom: 15px;">'
+    result_str += f'<td style="border: none; padding: 10px;">'
+    
+    # Display user ID
+    result_str += f'<div style="font-weight: bold; font-size: 18px; color: black;">Username: {user_id}</div>'
+    
+    # Display purpose
+    result_str += f'<div style="font-size: 16px; color: dimgray; margin-top: 5px;">Purpose: {purpose}</div>'
+    
+    # Display customer
+    result_str += f'<div style="font-size: 16px; color: dimgray; margin-top: 5px;">Customer: {customer}</div>'
+    
+    # Display time
+    result_str += f'<div style="font-size: 12px; color: green; margin-top: 10px;">{src_time}</div>'
+    
+    result_str += f'</td></tr>'
+    
+    # Spacer row
+    result_str += f'<tr style="border: none;"><td style="border: none; height: 10px;"></td></tr>'
+
+result_str += '</table></html>'
+
+# Hide Streamlit's menu and footer
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .css-hi6a2p {padding-top: 0rem;}
+    </style>
+    """
+
+# Render the result in Streamlit
+st.markdown(result_str, unsafe_allow_html=True)
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
