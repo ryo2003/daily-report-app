@@ -1,9 +1,13 @@
 import streamlit as st
-
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+from data_fetch import get_username
 
 if st.session_state.get("success_id"):
     userid = st.session_state.get("success_id")
-    st.write("お疲れ様です、"+userid+"さん。日報管理システムへようこそ!")
+    username = get_username(userid)
+    st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
 
 
 if st.button("マイページ"):
