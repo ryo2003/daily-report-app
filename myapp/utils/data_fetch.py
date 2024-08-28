@@ -4,9 +4,7 @@ import asyncio
 from beanie import Document, init_beanie, PydanticObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
-import streamlit as st
 import pymongo
-from bson import ObjectId
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -24,7 +22,7 @@ class Nippo(Document):
         name = "nippo"
 
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://sakair0903:glW4l6U3XgTXCqoL@cluster-ootsuka.qpezv.mongodb.net/")
+client = MongoClient(MONGO_URI)
 db = client["mydb"]  # Replace with your database name
 
 def get_nippo():
@@ -46,7 +44,6 @@ def get_username(user_id):
     
     # Return the username if found, otherwise return None
     return user["user_name"] if user else None
-
 
 
 # Initialize MongoDB client
