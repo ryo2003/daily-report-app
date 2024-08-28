@@ -33,5 +33,9 @@ def get_username(user_id):
 def get_calendar(user_id):
     collection = db["calendar"]
     calendar = collection.find_one({"_id": user_id})
-
     return calendar
+    
+def get_id_from_username(username):
+    users_collection = db["user"]
+    user = users_collection.find_one({"user_name": username})
+    return user["_id"]

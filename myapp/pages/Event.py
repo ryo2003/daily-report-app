@@ -4,7 +4,7 @@ import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from data_insert import insert_chat
+from data_register import insert_chat
 
 if st.session_state.get('event_data'):
     event_data = st.session_state['event_data']
