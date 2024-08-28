@@ -6,6 +6,7 @@ if st.session_state.get('event_data'):
     title = event_data['title']
     start_time = event_data['start']
     end_time = event_data['end']
+    event_id = event_data["event"]
     st.title(f"イベント:{title}")
     st.write("### イベント詳細")
     st.write(f"開始時間: {start_time}")
@@ -22,6 +23,7 @@ if st.session_state.get('event_data'):
         if option == '手動で作成':
             st.switch_page("pages/createbyhands.py")
         elif option == '対話で作成':
+            insert_chat()
             st.switch_page("pages/chatpage.py")
     # 閉じるボタン
     if st.button("閉じる"):
