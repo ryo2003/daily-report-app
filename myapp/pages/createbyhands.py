@@ -2,7 +2,7 @@ import streamlit as st
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_register import submit_byhands
+from data_register import submit_byhands_new
 
 userid = st.session_state.get("success_id")
 # ページのタイトル
@@ -35,10 +35,8 @@ next_visit_purpose = st.selectbox(
     ["選択してください", "初回訪問", "精査", "提案", "クローズ", "関係構築", "フォロー", "納品","その他"]
 )
 
-nippo_temporary = {"企業名":company_name,"訪問時間":visit_time,"訪問目的":visit_purpose,"同行者名":companion_name,"お客様の課題":customer_issues,"次回訪問日程":next_visit_schedule,"次回訪問目的":next_visit_purpose}
-
-nippo_containts = "企業名:{} 訪問時間:{} 訪問目的:{} 同行者名:{} お客様の課題:{} 次回訪問日程:{} 次回訪問目的:{}".format(company_name,visit_time,visit_purpose,companion_name,customer_issues,next_visit_schedule,next_visit_purpose)
-submit_data = {"企業名":company_name,"訪問目的":visit_purpose,"内容":nippo_containts}
+nippo_temporary = {"企業名":company_name,"訪問時間":format(visit_time),"訪問目的":visit_purpose,"同行者名":companion_name,"お客様の課題":customer_issues,"次回訪問日程":format(next_visit_schedule),"次回訪問目的":next_visit_purpose}
+submit_data = {"企業名":company_name,"訪問目的":visit_purpose,"内容":nippo_temporary}
 if st.button("確認"):
     st.session_state['getconsent'] = True
     st.session_state['event_data'] = nippo_temporary
@@ -56,8 +54,7 @@ if st.session_state.get('getconsent'):
         st.write(f"お客様の課題: {nippo_temporary['お客様の課題']}")
         st.write(f"次回訪問日程: {nippo_temporary['次回訪問日程']}")
         st.write(f"次回訪問目的: {nippo_temporary['次回訪問目的']}")
-        
 
         if st.button("送信する"):
-            submit_byhands(userid,submit_data)
+            submit_byhands_new(userid,submit_data)
             st.write("送信しました")

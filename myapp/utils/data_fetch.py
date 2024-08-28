@@ -72,5 +72,8 @@ async def fetch_nippo_async(nippo_model=Nippo):
     nippo_data = await nippo_model.find(fetch_links=True).to_list()
     return nippo_data
 
-
+def getnippo_from_nippoid(nippoid):
+    nippos_collection = db["nippo"]
+    nippo = nippos_collection.find_one({"_id": nippoid})
+    return nippo  
 
