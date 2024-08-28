@@ -45,6 +45,10 @@ def get_username(user_id):
     # Return the username if found, otherwise return None
     return user["user_name"] if user else None
 
+def get_id_from_username(username):
+    users_collection = db["user"]
+    user = users_collection.find_one({"user_name": username})
+    return user["_id"]
 
 # Initialize MongoDB client
 def get_client(event_loop=None):
