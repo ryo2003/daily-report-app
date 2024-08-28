@@ -10,10 +10,11 @@ client = MongoClient(mongo_URI)
 db = client["mydb"]  # Replace with your database name
 
 # submit nippo byhands
-def submit_byhands(submit_data):
+def submit_byhands(submit_user_id,submit_data):
     # submit_data is dictionary containing data user input on createbyhands page
     collection = db["nippo"]
     newdata = {
+        "user_id":submit_user_id,
         "contents":submit_data["内容"],
         "good": [None,None],
         "bookmark":[None],
