@@ -24,7 +24,7 @@ st.write("訪問時間:{}".format(visit_time))
 
 # 訪問目的
 visit_purpose = st.selectbox(
-    "訪問目的",
+    "活動分類",
     [ "電話対応","提案・見積もり","CS訪問","ヒアリング","納品","クロージング", "その他"]
 )
 
