@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from bson import ObjectId
+from st_bridge import bridge, html
 
 # 仮の日報データ
 # データベースができたらそっちから引っ張る
@@ -49,52 +50,40 @@ def get_attributes(nippos):
 
 
 def show_nippo(nippos):
-    result_str = '<html><table style="border: none; width: 100%;">'
-    
-    for nippo in nippos:
+    for nippo in nippos:  # Assuming nippos is your data
         username = get_username(nippo.user_id)
-        users.add(username)
         purpose = nippo.purpose
-        purposes.add(purpose)
         customer = nippo.customer
-        customers.add(customer)
-        src_time = nippo.get("src_time", "Unknown time")
+        src_time = nippo.timestamp
+        nippo_id = nippo.id
+        #st.write(nippo_id)
         
-        result_str += f'<tr style="border: none; background-color: whitesmoke; margin-bottom: 15px;">'
-        result_str += f'<td style="border: none; padding: 10px;">'
+        # Store nippo_id in session state for each nippo when the link is clicked
+        st.session_state[f'nippo_id_{nippo_id}'] = nippo_id
 
-        # Display username
-        result_str += f'<div style="font-size: 16px; color: dimgray; margin-top: 5px;">Username: {username}</div>'
-        
-        
-        # Display purpose
-        result_str += f'<div style="font-size: 16px; color: dimgray; margin-top: 5px;">Purpose: {purpose}</div>'
-        
-        # Display customer
-        result_str += f'<div style="font-size: 16px; color: dimgray; margin-top: 5px;">Customer: {customer}</div>'
-        
-        # Display time
-        result_str += f'<div style="font-size: 12px; color: green; margin-top: 10px;">{src_time}</div>'
-        
-        result_str += f'</td></tr>'
-        
-        # Spacer row
-        result_str += f'<tr style="border: none;"><td style="border: none; height: 10px;"></td></tr>'
+        # Initialize the bridge with a unique key for each iteration
+        data = bridge(f"nippo-bridge-{nippo_id}", default="No button is clicked", key=f"bridge-key-{nippo_id}")
 
-    result_str += '</table></html>'
+        # Define HTML with JavaScript to handle button clicks
+        html(f"""
+        <div style="background-color: whitesmoke; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+            <div style="font-size: 16px; color: dimgray;">Username: {username}</div>
+            <div style="font-size: 16px; color: dimgray;">Purpose: {purpose}</div>
+            <div style="font-size: 16px; color: dimgray;">Customer: {customer}</div>
+            <div style="font-size: 12px; color: green;">{src_time}</div>
+            <button style="margin-top: 10px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;" 
+                    onClick="stBridges.send('nippo-bridge-{nippo_id}', 'Nippo ID: {nippo_id}')">View Details</button>
+        </div>
+        """, key=f"html-key-{nippo_id}")
 
-    # Hide Streamlit's menu and footer
-    hide_streamlit_style = """
-        <style>
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        .css-hi6a2p {padding-top: 0rem;}
-        </style>
-        """
+        # Display the data returned by the bridge (based on which button was clicked)
+        #st.write(data)
 
-    # Render the result in Streamlit
-    st.markdown(result_str, unsafe_allow_html=True)
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+        # Optionally, you can perform more logic depending on the returned data
+        if "Nippo ID" in data:
+            st.session_state['selected_nippo_id'] = nippo_id
+            #st.success(f"Details fetched for {data}")
+            st.switch_page("pages/nippo_details.py") 
 
 # Main async function to run the app
 async def main():
@@ -121,24 +110,10 @@ async def main():
     selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
-    value = st.sidebar.slider('値を選択してください', 0, 100, 50)
-    st.write('選択した値は:', value)
+    #value = st.sidebar.slider('値を選択してください', 0, 100, 50)
+    #st.write('選択した値は:', value)
 
     show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
-
-
-    # 検索ボタン
-    search_button = st.sidebar.button("検索")
-
-    
-
-    #selected_name/company/purposeをutilsの検索functionに入れる
-    if search_button :
-        st.write("報告者："+selected_name+" 企業名："+selected_company+" 訪問目的:"+selected_purpose+"　での検索結果は以下です")
-        st.write("まだ検索用の関数が作られていないためエラーがでます")
-        #select_nippo(nippo_data,selected_name)
-        #search_result = utils.search(selected_name,selected_company,selected_purpose)
-        #st.write(search_result)
     
 
 
