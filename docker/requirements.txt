@@ -1,5 +1,6 @@
 streamlit 
 streamlit-calendar
+streamlit_text_rating
 pymongo
 openai
 python-dotenv
