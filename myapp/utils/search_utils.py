@@ -10,6 +10,7 @@ users = set()
 customers = set()
 purposes = set()
 
+
 def select_nippo(nippos,sel_username=None,sel_customer=None, sel_purpose=None):
     selected_nippo = []
 
