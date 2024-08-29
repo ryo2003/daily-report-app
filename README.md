@@ -19,7 +19,7 @@
 3. **Start the server using Docker Compose:**
 
    ```bash
-   docker-compose up
+   docker-compose up --build
    ```
 
 4. **Access the application:**
