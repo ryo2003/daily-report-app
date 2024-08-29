@@ -15,6 +15,7 @@ async def main():
     user_id = st.session_state.get("success_id")
     # 閲覧している日報のid取得(仮)
     nippo_id = st.session_state.get('selected_nippo_id', None)
+
     
     filter = {
         "_id":nippo_id
@@ -32,6 +33,7 @@ async def main():
     event_name = "A会社との商談"
 
     contents = nippo[0].contents
+
 
     st.title(f"イベント: {event_name} の日報")
     st.write(f"作成者: {author_username}")
