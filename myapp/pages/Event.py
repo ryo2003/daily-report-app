@@ -11,11 +11,13 @@ if st.session_state.get('event_data'):
     title = event_data['title']
     start_time = event_data['start']
     end_time = event_data['end']
+    adress = event_data["extendedProps"]["address"]
     # event_id = event_data["event_id"]
     st.title(f"イベント:{title}")
     st.write("### イベント詳細")
     st.write(f"開始時間: {start_time}")
     st.write(f"終了時間: {end_time}")
+    st.write(f"場所: {adress}")
     
     # ダイアログの表示制御
 

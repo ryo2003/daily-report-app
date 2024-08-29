@@ -2,15 +2,38 @@ import os
 import sys
 import json
 
+from bson import ObjectId
 import streamlit as st
 from streamlit_calendar import calendar
+import asyncio
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_calendar
+from data_fetch import get_client, init_database, fetch_async
+from models import Event
 
-def main():
-    user_id="66cd29b9157702dc731b0fdd"
+def parse2fullcal(events):
+    fullcalendar_events = []
+    for event in events:
+        fullcalendar_event = {
+            "id": str(event.id),
+            "title": event.customer,
+            "start": event.start_time.isoformat(),
+            "end": event.end_time.isoformat(),
+            "extendedProps": {
+                "address": event.address
+            }
+        }
+        fullcalendar_events.append(fullcalendar_event)
+    return fullcalendar_events
 
+async def main():
+    user_id=ObjectId("66cd29b9157702dc731b0fdd")
+    client = get_client()
+    filter={"user_id": user_id}
+    await init_database(client,models=[Event])
+    events_list = await fetch_async(filter,model=Event)
+    calendar_events = parse2fullcal(events_list)
+    print("aaakfherogiah",calendar_events)
     calendar_options = {
                 
         "headerToolbar": {
@@ -19,10 +42,9 @@ def main():
             "right": "dayGridDay,dayGridWeek,dayGridMonth",
         },
     }
-    events = get_calendar(user_id)
-    print(events)
     json_open = open("demo_data.json", 'r')
-    calendar_events = json.load(json_open)
+    calendar_events_b = json.load(json_open)
+    print(calendar_events,calendar_events_b)
     custom_css="""
         .fc-event-past {
             opacity: 0.8;
@@ -38,7 +60,7 @@ def main():
         }
     """
 
-    calendar = calendar(events=calendar_events, options=calendar_options, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
+    cal = calendar(events=calendar_events, options=calendar_options, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
 
     if st.session_state.get("success_id"):
         st.write("abc")
@@ -48,8 +70,8 @@ def main():
         st.session_state['show_modal'] = False
 
     # eventClick コールバックの処理
-    if calendar.get("eventClick"):
-        event_data = calendar["eventClick"]["event"]
+    if cal.get("eventClick"):
+        event_data = cal["eventClick"]["event"]
         st.session_state['show_modal'] = True
         st.session_state['event_data'] = event_data  # イベントデータを保存
         st.switch_page("pages/Event.py")
@@ -63,4 +85,4 @@ def main():
         st.write(f"終了時間: {event_data['end']}")
 
 
-main()
+asyncio.run(main())
