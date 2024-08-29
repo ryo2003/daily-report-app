@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the application code last to prevent unnecessary rebuilds
 COPY ./myapp /app/
-COPY ./docker /app/docker/
+COPY ./docker /docker/
 
 # Expose the port
 EXPOSE 8501

@@ -7,8 +7,8 @@ services:
     ports:
       - "8501:8501"  # Maps port 8501 on your host to port 8501 in the container
     volumes:
-      - ../myapp:/app
-      - ../docker:/docker        # Maps the current directory to /app in the container
+      - ../myapp:/app  
+      - ../docker:/docker  # Maps the current directory to /app in the container
     environment:
       - PYTHONUNBUFFERED=1
     command: >
