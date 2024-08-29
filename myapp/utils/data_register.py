@@ -5,23 +5,31 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
+import datetime
 
+dt_now = datetime.datetime.now()
 # Connect to MongoDB
 client = MongoClient(mongo_URI)
 db = client["mydb"]  # Replace with your database name
 
 # submit nippo byhands
-def submit_byhands_new(submit_user_id,submit_data):
+def submit_byhands_new(submit_data,submit_user_id,event_data):
     # submit_data is dictionary containing data user input on createbyhands page
     collection = db["nippo"]
+    events = db["event"]
+    event_time = event_data["start"]
+
     newdata = {
-        "maketype":"byhands",
         "user_id":submit_user_id,
-        "contents":submit_data["内容"],
+        "event_id":ObjectId(event_data["id"]),
+        "contents":submit_data["本文"],
         "good": [],
         "bookmark":[],
         "purpose":submit_data["訪問目的"],
-        "customer":submit_data["企業名"]
+        "customer":submit_data["企業名"],
+        "chat_log_id":None,
+        "timestamp":dt_now,
+        "event_time":datetime.datetime.fromisoformat(event_time)
     }
     collection.insert_one(newdata)
     

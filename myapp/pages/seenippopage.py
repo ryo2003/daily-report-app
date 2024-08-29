@@ -60,3 +60,4 @@ st.write(nippo_id)
 # elif st.session_state.get("response") == "disliked":
 #     st.write("バッドしました")
 
+
