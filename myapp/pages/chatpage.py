@@ -3,10 +3,11 @@ import os
 import time
 import streamlit as st
 from bson import ObjectId
+import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog
+from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog, make_nippo_data, extract_keys_from_json
 
 def main():
 
@@ -27,8 +28,11 @@ def main():
     }
 
     if 'initialized' not in st.session_state or not st.session_state.initialized:
-        if 'chatlog_id' not in st.session_state:
+        st.session_state.report_class = extract_keys_from_json("report_category.json")
+        print("st.session_state.report_class",st.session_state.report_class)
+        if 'chatlog_id' not in st.session_state or 'event_id' not in st.session_state:
             st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
+            st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
         
         print("st.session_state.chatlog_id",st.session_state.chatlog_id)
         print("get_chatlog(st.session_state.chatlog_id)",get_chatlog(st.session_state.chatlog_id))
@@ -49,28 +53,38 @@ def main():
             with st.chat_message(chat["name"]):
                 st.write(chat["msg"])
         st.session_state.initialized = True
+    
+    with st.sidebar:
+        st.title("にっぽー")
+        make_nippo = st.button("日報作成")
+        save_nippo = st.button("日報を保存する")
 
     
-    user_msg = st.chat_input("ここにメッセージを入力! 日報を作成したいときは「日報作成」と入力してください。")
+    user_msg = st.chat_input("ここにメッセージを入力!")
 
-    if user_msg:
+    if save_nippo:
+        user_msg = "日報を保存。"
+        make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, "営業", st.session_state.chatlog_id)
+        assistant_msg = "日報を保存しました。"
 
-        if len(st.session_state.chat_log)//2 >= 10 or user_msg == "日報作成":
-            if len(st.session_state.chat_log) < 2:
-                assistant_msg = "コンテンツがありません"
-            else:
-                print("st.session_state.chat_log",st.session_state.chat_log)
-                assistant_msg=create_nippo(st.session_state.chat_log[:-1])
-                st.session_state.chat_log.pop()
-                pop_chatlog(st.session_state.chatlog_id)
-                print("st.session_state.chat_log",st.session_state.chat_log)
+    elif make_nippo:
+        user_msg = "日報作成"
+        if len(st.session_state.chat_log) < 2:
+            assistant_msg = "コンテンツがありません"
         else:
-            assistant_msg=create_question(st.session_state.chat_log)
+            print("st.session_state.chat_log",st.session_state.chat_log)
+            assistant_msg=create_nippo(st.session_state.chat_log[:-1])
+            st.session_state.chat_log.pop()
+            pop_chatlog(st.session_state.chatlog_id)
+            print("st.session_state.chat_log",st.session_state.chat_log)
+    
+    elif user_msg:
+        assistant_msg=create_question(st.session_state.chat_log)
 
+    if user_msg or make_nippo or save_nippo:
         # 以前のチャットログを表示
         for chat in st.session_state.chat_log:
             print("chat",chat)
-            print()
             avator = avator_img_dict.get(chat["name"], None)
             with st.chat_message(chat["name"]):
                 st.write(chat["msg"])
@@ -89,6 +103,5 @@ def main():
         add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
         add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
-if __name__ == "__main__":
-    main()
+main()
 

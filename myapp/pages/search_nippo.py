@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_nippo_async
+from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from bson import ObjectId
 
 # 仮の日報データ
@@ -35,9 +35,9 @@ def select_nippo(nippos,sel_username=None,sel_customer=None, sel_purpose=None):
         
         # If all provided conditions are met, add the nippo to the selected list
         selected_nippo.append(nippo)
-
     return selected_nippo
             
+
 
 def show_nippo(nippos):
     result_str = '<html><table style="border: none; width: 100%;">'
