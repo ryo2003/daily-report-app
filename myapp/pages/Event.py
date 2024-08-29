@@ -30,7 +30,7 @@ if st.session_state.get('event_data'):
         if option == '手動で作成':
             st.switch_page("pages/createbyhands.py")
         elif option == '対話で作成':
-            insert_chat()
+            # insert_chat()
             st.switch_page("pages/chatpage.py")
     # 閉じるボタン
     if st.button("閉じる"):

@@ -12,6 +12,7 @@ class Nippo(Document):
     customer: str
     chat_log_id: PydanticObjectId
     timestamp: datetime
+    event_time: datetime
 
     class Settings:
         name = "nippo"

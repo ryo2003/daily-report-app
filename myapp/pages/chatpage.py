@@ -100,6 +100,5 @@ def main():
         add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
         add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
-if __name__ == "__main__":
-    main()
+main()
 
