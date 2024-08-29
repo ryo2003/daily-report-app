@@ -5,9 +5,15 @@ from openai import AzureOpenAI
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import ObjectId
+import json
 
 load_dotenv()
 
+def extract_keys_from_json(filename):
+    with open(filename, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    keys_list = list(data.keys())
+    return keys_list
 
 def create_question(chatlog: list[dict]) -> str:
     return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
