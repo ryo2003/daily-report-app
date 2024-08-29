@@ -83,7 +83,7 @@ def show_nippo(nippos):
         if "Nippo ID" in data:
             st.session_state['selected_nippo_id'] = nippo_id
             #st.success(f"Details fetched for {data}")
-            st.switch_page("pages/nippo_details.py") 
+            st.switch_page("pages/nippo_detail.py") 
 
 # Main async function to run the app
 async def main():

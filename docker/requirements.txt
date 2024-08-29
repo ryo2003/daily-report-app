@@ -6,3 +6,4 @@ openai
 python-dotenv
 beanie
 asyncio
+streamlit_bridge
