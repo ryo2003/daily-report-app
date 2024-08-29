@@ -7,14 +7,6 @@ from data_fetch import get_nippo, get_username, get_user, get_client, init_datab
 from bson import ObjectId
 from st_bridge import bridge, html
 
-# 仮の日報データ
-# データベースができたらそっちから引っ張る
-users = set()
-customers = set()
-purposes = set()
-
-st.title("日報検索")
-from st_bridge import bridge, html
 
 # 仮の日報データ
 # データベースができたらそっちから引っ張る
@@ -111,9 +103,7 @@ async def main():
     data = {
     "報告者": list(users),
     "企業名": list(customers),
-    "訪問時間": ["2024-08-20 10:00", "2024-08-21 14:00", "2024-08-22 09:00"],
     "訪問目的": list(purposes),
-    "お客様の課題": ["価格競争が激しい", "納期の短縮", "競合他社が強力"],
     }
 
     # 検索フォーム
@@ -126,14 +116,6 @@ async def main():
 
     show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
     
-
-    data = {
-    "報告者": list(users),
-    "企業名": list(customers),
-    "訪問時間": ["2024-08-20 10:00", "2024-08-21 14:00", "2024-08-22 09:00"],
-    "訪問目的": list(purposes),
-    "お客様の課題": ["価格競争が激しい", "納期の短縮", "競合他社が強力"],
-    }
 
     # 検索フォーム
     st.sidebar.header("検索条件")
