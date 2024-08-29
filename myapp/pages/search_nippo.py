@@ -35,7 +35,7 @@ if search_button :
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_nippo_async
+from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from bson import ObjectId
 
 st.title("Feed View Example")
@@ -68,7 +68,7 @@ async def main():
     client = get_client()
     await init_database(client)
     
-    nippo_data = await fetch_nippo_async()
+    nippo_data = await fetch_async()
 
     st.write("Nippo Data:")
     # for nippo in nippo_data:
