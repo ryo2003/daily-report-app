@@ -3,10 +3,11 @@ import os
 import time
 import streamlit as st
 from bson import ObjectId
+import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog, make_nippo_data
+from chat import create_question, create_nippo, get_chatlog, add_chatlog, pop_chatlog, make_nippo_data, extract_keys_from_json
 
 def main():
 
@@ -27,6 +28,8 @@ def main():
     }
 
     if 'initialized' not in st.session_state or not st.session_state.initialized:
+        st.session_state.report_class = extract_keys_from_json("report_category.json")
+        print("st.session_state.report_class",st.session_state.report_class)
         if 'chatlog_id' not in st.session_state or 'event_id' not in st.session_state:
             st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
             st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
@@ -57,7 +60,7 @@ def main():
         save_nippo = st.button("日報を保存する")
 
     
-    user_msg = st.chat_input("ここにメッセージを入力! 日報を作成したいときは「日報作成」と入力してください。")
+    user_msg = st.chat_input("ここにメッセージを入力!")
 
     if save_nippo:
         user_msg = "日報を保存。"
@@ -100,6 +103,5 @@ def main():
         add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
         add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
-if __name__ == "__main__":
-    main()
+main()
 
