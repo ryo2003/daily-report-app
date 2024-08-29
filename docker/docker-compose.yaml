@@ -7,14 +7,14 @@ services:
     ports:
       - "8501:8501"  # Maps port 8501 on your host to port 8501 in the container
     volumes:
-      - ../myapp:/app       # Maps the current directory to /app in the container
+      - ../myapp:/app  
+      - ../docker:/docker  # Maps the current directory to /app in the container
     environment:
       - PYTHONUNBUFFERED=1
     command: >
-      /bin/bash "
-      pip install --no-cache-dir -r /app/docker/requirements.txt &&
-      streamlit run app.py --server.port=8501 --server.address=0.0.0.0
-      "
+      bash -c 
+      'pip install --no-cache-dir -r /docker/requirements.txt &&
+       streamlit run /app/app.py --server.port=8501 --server.address=0.0.0.0'
     restart: always
   mongodb:
     container_name: "mongodb"
