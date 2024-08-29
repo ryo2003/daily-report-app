@@ -89,13 +89,6 @@ async def main():
         st.session_state['event_data'] = event_data  # イベントデータを保存
         st.switch_page("pages/Event.py")
 
-    # ダイアログの表示制御
-    if st.session_state.get('show_modal'):
-        event_data = st.session_state['event_data']
-        st.write("### イベント詳細")
-        st.write(f"タイトル: {event_data['title']}")
-        st.write(f"開始時間: {event_data['start']}")
-        st.write(f"終了時間: {event_data['end']}")
 
 
 asyncio.run(main())
