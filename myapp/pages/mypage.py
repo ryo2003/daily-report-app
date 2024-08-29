@@ -32,7 +32,7 @@ def parse2fullcal(events):
 async def main():
 
     userid = st.session_state.get("success_id")
-    username = get_username(userid)
+    username = str(get_username(userid))
     
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     if st.button("自分の書いた日報を見る"):
