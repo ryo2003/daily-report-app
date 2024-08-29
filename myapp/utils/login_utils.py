@@ -45,7 +45,7 @@ def login(username,password):
         if check_correctpassword(username,password):
             st.session_state["success_id"] = get_id_from_username(username)
             st.success("ログイン成功!")
-            st.switch_page("pages/toppage.py")
+            st.switch_page("pages/mypage.py")
         else:
             st.error("ユーザ名またはパスワードが間違っています。")
 
