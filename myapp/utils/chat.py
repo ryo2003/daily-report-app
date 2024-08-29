@@ -5,6 +5,8 @@ from openai import AzureOpenAI
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import ObjectId
+from datetime import datetime
+import pytz
 import json
 
 load_dotenv()
@@ -16,7 +18,7 @@ def extract_keys_from_json(filename):
     return keys_list
 
 def create_question(chatlog: list[dict]) -> str:
-    return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
+    # return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
     api_key = os.getenv('API_KEY')
@@ -29,10 +31,12 @@ def create_question(chatlog: list[dict]) -> str:
     )
 
     prompt = '以下の会話をもとに、ステップバイステップで日報作成に必要な情報を聞き出すような質問をしてください。'
+    mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
+    print("mess",mess)
     try:
         response = client.chat.completions.create(
             model=model_name , # model = "deployment_name".
-            messages = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog],
+            messages = mess,
         )
     except Exception as e:
         return 'エラーが発生しました。'
@@ -40,7 +44,7 @@ def create_question(chatlog: list[dict]) -> str:
     return response.choices[0].message.content
 
 def create_nippo(chatlog: list[dict]) -> str:
-    return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
+    # return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
     api_key = os.getenv('API_KEY')
@@ -52,11 +56,13 @@ def create_nippo(chatlog: list[dict]) -> str:
     azure_endpoint =api_base
     )
 
-    prompt = '以下の会話をもとに、hallucinationに気をつけて日報を作成してください。\n\n'
+    prompt = '以下の会話をもとに、hallucinationに気をつけて日報を作成してください。'
+    mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
+    print("mess",mess)
     try:
         response = client.chat.completions.create(
             model=model_name ,
-            messages = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog],
+            messages = mess,
         )
     except Exception as e:
         return 'エラーが発生しました。'
@@ -79,6 +85,27 @@ def get_chatlog(chatlogId) -> list:
         return []
     
     return chatlog.get("log_data", [])
+
+def get_category(chatlogId) -> str:
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    chatlog = collection.find_one({"_id": chatlogId})
+
+    if chatlog is None:
+        return ""
+    
+    return chatlog.get("category", "")
+
+def add_catdata(chatlogId, category):
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    collection.update_one({"_id": chatlogId}, {"$set": {"category": category}}, upsert=True)
 
 def add_chatlog(chatlogId, chatlog):
     mongo_uri = os.getenv('MONGO_URI')
@@ -105,6 +132,16 @@ def pop_chatlog(chatlogId):
     )
     return
 
+def reset_log(chatlogId):
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    collection.update_one({"_id": chatlogId}, {"$set": {"log_data": []}})
+    collection.update_one({"_id": chatlogId}, {"$set": {"category": ""}})
+    return
+
 def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : ObjectId = None):
     print("make_nippo_data")
     print("nippo: ",nippo)
@@ -113,13 +150,19 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
     client = MongoClient(mongo_uri)
     db = client['mydb']
 
+    # 削除パート
     collection = db['event']
-
     nippo_id = collection.find_one({"_id": eventId})["nippo_id"]
     if nippo_id is not None:
         collection = db['nippo']
         if collection.find_one({"_id": nippo_id}) is not None:
             collection.delete_one({"_id": nippo_id})
+        collection = db['user']
+        collection.update_one(
+            {"nippo_id": nippo_id},
+            {"$pull": {"nippo_id": nippo_id}}
+        )
+    # 削除パート終了
     
     collection = db['event']
 
@@ -129,6 +172,7 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
     print("userId",userId)
     print("customer",customer)
 
+    event_time = collection.find_one({"_id": eventId})["start_time"]
     collection = db['nippo']
     nippo_data = {
         "user_id": userId,
@@ -136,12 +180,13 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
         "contents": nippo,
         "good" : [],
         "bookmark" : [],
-
         "purpose": purpose,
         "customer": customer,
+        "chat_log_id": chatlogId,
+        "timestamp": datetime.now() + pytz.timezone('Asia/Tokyo').utcoffset(datetime.now()),
+        "event_time": event_time
     }
-    if chatlogId is not None:
-        nippo_data["chatlog_id"] = chatlogId
+
     res = collection.insert_one(nippo_data)
 
     nippo_id = res.inserted_id
