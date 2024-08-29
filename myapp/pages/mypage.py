@@ -10,6 +10,7 @@ import asyncio
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from data_fetch import get_client, init_database, fetch_async
 from models import Event
+from search_utils import select_nippo
 
 def parse2fullcal(events):
     fullcalendar_events = []
