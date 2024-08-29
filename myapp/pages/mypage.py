@@ -8,9 +8,11 @@ from streamlit_calendar import calendar
 import asyncio
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_client, init_database, fetch_async
+from data_fetch import get_client, init_database, fetch_async,get_username
 from models import Event
-from search_utils import select_nippo
+
+
+
 
 def parse2fullcal(events):
     fullcalendar_events = []
@@ -28,6 +30,18 @@ def parse2fullcal(events):
     return fullcalendar_events
 
 async def main():
+
+    userid = st.session_state.get("success_id")
+    username = get_username(userid)
+    
+    st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
+    if st.button("自分の書いた日報を見る"):
+        st.switch_page("pages/seemynippo.py")
+    
+    if st.button("他の人が書いた日報を見る"):
+    # クエリパラメータを設定して、search.pyページに遷移
+        st.switch_page("pages/search_nippo.py")
+
     user_id=ObjectId("66cd29b9157702dc731b0fdd")
     client = get_client()
     filter={"user_id": user_id}
@@ -63,8 +77,6 @@ async def main():
 
     cal = calendar(events=calendar_events, options=calendar_options, custom_css=custom_css, callbacks=['dateClick', 'eventClick', 'eventChange', 'eventsSet', 'select'], license_key='CC-Attribution-NonCommercial-NoDerivatives', key=None)
 
-    if st.session_state.get("success_id"):
-        st.write("abc")
 
     # 初期状態の設定
     if 'show_modal' not in st.session_state:
