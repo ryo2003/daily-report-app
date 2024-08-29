@@ -8,9 +8,9 @@ from bson import ObjectId
 
 # 仮の日報データ
 # データベースができたらそっちから引っ張る
-users = []
-customers = []
-purposes = []
+users = set()
+customers = set()
+purposes = set()
 
 st.title("日報検索")
 
@@ -36,7 +36,16 @@ def select_nippo(nippos,sel_username=None,sel_customer=None, sel_purpose=None):
         # If all provided conditions are met, add the nippo to the selected list
         selected_nippo.append(nippo)
     return selected_nippo
-            
+
+def get_attributes(nippos):
+    for nippo in nippos:
+        username = get_username(nippo.user_id)
+        users.add(username)
+        purpose = nippo.purpose
+        purposes.add(purpose)
+        customer = nippo.customer
+        customers.add(customer)
+
 
 
 def show_nippo(nippos):
@@ -44,11 +53,11 @@ def show_nippo(nippos):
     
     for nippo in nippos:
         username = get_username(nippo.user_id)
-        users.append(username)
+        users.add(username)
         purpose = nippo.purpose
-        purposes.append(purpose)
+        purposes.add(purpose)
         customer = nippo.customer
-        customers.append(customer)
+        customers.add(customer)
         src_time = nippo.get("src_time", "Unknown time")
         
         result_str += f'<tr style="border: none; background-color: whitesmoke; margin-bottom: 15px;">'
@@ -93,18 +102,17 @@ async def main():
     client = get_client()
     await init_database(client)
     
-    nippo_data = await fetch_nippo_async()
+    nippo_data = await fetch_async()
+    get_attributes(nippo_data)
 
     st.write("Nippo Data:")
     
 
-    #st.write(users)
-
     data = {
-    "報告者": ["users","su","c"],
-    "企業名": ["Project Planning","HIJ株式会社","c"],
+    "報告者": list(users),
+    "企業名": list(customers),
     "訪問時間": ["2024-08-20 10:00", "2024-08-21 14:00", "2024-08-22 09:00"],
-    "訪問目的": ["価格競争が激しい", "納期の短縮", "競合他社が強力"],
+    "訪問目的": list(purposes),
     "お客様の課題": ["価格競争が激しい", "納期の短縮", "競合他社が強力"],
     }
 
@@ -116,10 +124,13 @@ async def main():
     value = st.sidebar.slider('値を選択してください', 0, 100, 50)
     st.write('選択した値は:', value)
 
+    show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
+
+
     # 検索ボタン
     search_button = st.sidebar.button("検索")
 
-    show_nippo(select_nippo(nippo_data,selected_name,selected_company))
+    
 
     #selected_name/company/purposeをutilsの検索functionに入れる
     if search_button :
