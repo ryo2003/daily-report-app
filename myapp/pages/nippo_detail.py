@@ -15,7 +15,8 @@ async def main():
     # ログインしているユーザのid取得
     user_id = st.session_state.get("success_id")
     # 閲覧している日報のid取得(仮)
-    nippo_id = ObjectId("66cfe05b8d90b8e8fead968b")
+    nippo_id = st.session_state.get('selected_nippo_id', "66cfe05b8d90b8e8fead968b")
+
     
     filter = {
         "_id":nippo_id

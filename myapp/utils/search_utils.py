@@ -8,18 +8,11 @@ from bson import ObjectId
 from st_bridge import bridge, html
 
 
-# 仮の日報データ
-# データベースができたらそっちから引っ張る
 users = set()
 customers = set()
 purposes = set()
 
-st.title("日報検索")
 
-st.title("Feed View Example")
-
-import streamlit as st
-import asyncio
 def select_nippo(nippos,sel_username=None,sel_customer=None, sel_purpose=None):
     selected_nippo = []
 
@@ -47,7 +40,6 @@ def get_attributes(nippos):
         purposes.add(purpose)
         customer = nippo.customer
         customers.add(customer)
-
 
 
 def show_nippo(nippos):
@@ -84,52 +76,4 @@ def show_nippo(nippos):
         if "Nippo ID" in data:
             st.session_state['selected_nippo_id'] = nippo_id
             #st.success(f"Details fetched for {data}")
-            st.switch_page("pages/nippo_detail.py") 
-
-# Main async function to run the app
-async def main():
-
-
-    client = get_client()
-    await init_database(client)
-    
-    nippo_data = await fetch_async()
-    get_attributes(nippo_data)
-    get_attributes(nippo_data)
-
-    st.write("Nippo Data:")
-    
-
-    data = {
-    "報告者": list(users),
-    "企業名": list(customers),
-    "訪問目的": list(purposes),
-    }
-
-    # 検索フォーム
-    st.sidebar.header("検索条件")
-    selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
-    selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
-    selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
-    #value = st.sidebar.slider('値を選択してください', 0, 100, 50)
-    #st.write('選択した値は:', value)
-
-    show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
-    
-
-    # 検索フォーム
-    st.sidebar.header("検索条件")
-    selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
-    selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
-    selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
-    #value = st.sidebar.slider('値を選択してください', 0, 100, 50)
-    #st.write('選択した値は:', value)
-
-    show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
-    
-
-
-# Entry point for the application
-asyncio.run(main())
-
-
+            st.switch_page("pages/nippo_details.py") 
