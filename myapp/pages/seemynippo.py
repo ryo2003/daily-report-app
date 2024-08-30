@@ -28,8 +28,6 @@ async def main():
     nippo_data = await fetch_async()
     get_attributes(nippo_data)
 
-    
-
     data = {
     "報告者": list(users),
     "企業名": list(customers),
