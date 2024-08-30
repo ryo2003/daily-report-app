@@ -41,8 +41,6 @@ async def main():
     selected_name = myname
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
-    value = st.sidebar.slider('値を選択してください', 0, 100, 50)
-    st.write('選択した値は:', value)
 
     show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
 

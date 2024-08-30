@@ -44,6 +44,8 @@ def get_attributes(nippos):
 
 
 def show_nippo(nippos):
+    iine_dict = {}
+    stock_dict = {}
     for nippo in nippos:  # Assuming nippos is your data
         username = get_username(nippo.user_id)
         purpose = nippo.purpose
@@ -57,8 +59,9 @@ def show_nippo(nippos):
         st.session_state[f'nippo_id_{nippo_id}'] = nippo_id
 
         # Initialize the bridge with a unique key for each iteration
-        data = bridge(f"nippo-bridge-{nippo_id}", default="No button is clicked", key=f"bridge-key-{nippo_id}")
-
+        data = bridge(f"nippo-bridge-{nippo_id}", default="No button is clicked", key=f"bridge-key_{nippo_id}")
+        iine_dict[nippo_id]=bridge(f"hand-thumbs-up-fill_{nippo_id}", default="", key=f"bridge-key_i_{nippo_id}")
+        stock_dict[nippo_id]=bridge(f"bookmark_{nippo_id}", default="", key=f"bridge-key_s_{nippo_id}")
         # Define HTML with JavaScript to handle button clicks
         html_tem = nippo_card(username,purpose,customer,src_time,nippo_id,contents)
         html(html_tem, key=f"html-key-{nippo_id}")
@@ -67,6 +70,7 @@ def show_nippo(nippos):
         #st.write(data)
 
         # Optionally, you can perform more logic depending on the returned data
+        
         if "Nippo ID" in data:
             st.session_state['selected_nippo_id'] = nippo_id
             #st.success(f"Details fetched for {data}")

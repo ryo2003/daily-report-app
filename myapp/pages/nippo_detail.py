@@ -64,13 +64,14 @@ async def main():
             <div class="small mx-1">日報作成日：{timestamp.strftime("%Y-%m-%d %H:%M:%S")}</div>
         </div>
     </div>
-        <div class="d-flex">
-<div>
-{icon_toggle("hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked",color="btn-outline-primary")}
-</div>
+    <div class="d-flex">
+    <div>
+    {icon_toggle("hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked",color="btn-outline-primary")}
+    </div>
 
-<div>
-{icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked")}
+    <div>
+    {icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked")}
+    </div>
 </div>
 """)
    
