@@ -8,6 +8,7 @@ from datetime import datetime
 userid = st.session_state.get("success_id")
 
 event_data = st.session_state.get("event_data")
+event_purpose = event_data["extendedProps"]["purpose"]
 company_name = event_data["title"]
 visit_time = event_data["start"]
 
@@ -22,10 +23,8 @@ st.write("会社名:{}".format(company_name))
 st.write("訪問時間:{}".format(visit_time))
 
 # 訪問目的
-visit_purpose = st.selectbox(
-    "活動分類",
-    [ "電話対応","提案・見積もり","CS訪問","ヒアリング","納品","クロージング", "その他"]
-)
+visit_purpose = event_purpose
+st.write("活動分類:{}".format(visit_purpose))
 
 # 本文
 customer_issues = st.text_area("本文を入力してください。お客様の課題・同行者・次回訪問などがある場合、それも記入してください。", height=100)
