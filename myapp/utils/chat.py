@@ -31,7 +31,7 @@ def create_question(chatlog: list[dict], other_info : dict) -> str:
     )
 
     print("other_info",other_info)
-    prompt = f"""あなたは完璧な日報作成システムです。日報作成にあたって必要な情報をユーザーから聞き出したください。ただし、1回の発話では1個のことについて聞くことを心がけてください。また、答えやすい質問を心がけてください。日報のカテゴリーは{other_info.get('purpose', '')}で、相手の企業名は{other_info.get('customer', '')}、日時は{other_info.get('start_time', '')}、場所は{other_info.get('address', '')}です。"""
+    prompt = f"""あなたは完璧な日報作成システムです。日報作成にあたって必要な情報をユーザーから聞き出したください。ただし、1回の発話では1個のことについて聞くことを心がけてください。また、答えやすい質問を心がけてください。日報のカテゴリーは{other_info.get('purpose', '')}で、相手の企業名は{other_info.get('customer', '')}、日時は{other_info.get('start_time', '')}、場所は{other_info.get('address', '')}です。関係ない話をしたときは、「その質問には回答できません。」と返答してください。"""
     mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
     print("mess",mess)
 
@@ -155,7 +155,6 @@ def reset_log(chatlogId):
     collection = db['chat_log']
 
     collection.update_one({"_id": chatlogId}, {"$set": {"log_data": []}})
-    collection.update_one({"_id": chatlogId}, {"$set": {"category": ""}})
     return
 
 def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : ObjectId = None):
