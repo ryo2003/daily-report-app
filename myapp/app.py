@@ -12,6 +12,7 @@ login = st.Page(page="pages/login.py",title = "login")
 event = st.Page(page="pages/Event.py",title = "event")
 seenippo = st.Page(page="pages/nippo_detail.py",title="日報詳細閲覧ページ",icon=":material/visibility:")
 seemynippo = st.Page(page="pages/seemynippo.py",title="自分の日報",icon=":material/visibility:")
+edit = st.Page(page="pages/editpage.py",title="日報の編集",icon=":material/edit:")
 
-pg = st.navigation([top_page, my_profile,search,chat,create_by_hand,login,event,seenippo,seemynippo])
+pg = st.navigation([top_page, my_profile,search,chat,create_by_hand,login,event,seenippo,seemynippo,edit])
 pg.run()

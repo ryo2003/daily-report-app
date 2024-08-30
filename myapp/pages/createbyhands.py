@@ -8,6 +8,7 @@ from datetime import datetime
 userid = st.session_state.get("success_id")
 
 event_data = st.session_state.get("event_data")
+event_id = event_data["_id"]
 event_purpose = event_data["extendedProps"]["purpose"]
 company_name = event_data["title"]
 visit_time = event_data["start"]
@@ -53,3 +54,6 @@ if st.session_state.get('getconsent'):
         if st.button("送信する"):
             submit_byhands_new(nippo_temporary,userid,event_data,exist_id)
             st.write("日報を送信しました")
+
+            
+
