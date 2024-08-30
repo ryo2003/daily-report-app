@@ -23,7 +23,8 @@ def parse2fullcal(events):
             "start": event.start_time.isoformat(),
             "end": event.end_time.isoformat(),
             "extendedProps": {
-                "address": event.address
+                "address": event.address,
+                "purpose": event.purpose
             }
         }
         fullcalendar_events.append(fullcalendar_event)
