@@ -35,12 +35,8 @@ async def main():
     calendar_events = parse2fullcal(events_list)
     print("aaakfherogiah",calendar_events)
     calendar_options = {
-                
-        "headerToolbar": {
-            "left": "today prev,next",
-            "center": "title",
-            "right": "dayGridDay,dayGridWeek,dayGridMonth",
-        },
+        "minTime":'08:00:00',
+        "maxTime": '18:00:00', 
     }
     json_open = open("demo_data.json", 'r')
     calendar_events_b = json.load(json_open)
