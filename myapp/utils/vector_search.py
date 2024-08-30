@@ -15,7 +15,7 @@ api_base = os.getenv("API_BASE")
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client["mydb"]
-collection = db["nippo_contents"]
+collection = db["nippo"]
 
 client = AzureOpenAI(
   api_key =api_key,  
@@ -37,7 +37,7 @@ def create_embedding(contents="this is sample text", purpose='',model="text-embe
         "embedding":embedding,
         "text": text
     }
-    collection.insert_one(newdata)
+    #collection.insert_one(newdata)
 
     #st.write('embedding', embedding)
 

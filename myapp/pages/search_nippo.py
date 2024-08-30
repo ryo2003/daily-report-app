@@ -4,6 +4,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
+from search_utils import show_nippo
+from vector_search import create_embedding, find_similar_documents, get_highest_score_document
 from bson import ObjectId
 from st_bridge import bridge, html
 
@@ -15,7 +17,35 @@ purposes = set()
 
 st.title("日報検索")
 
-st.title("Feed View Example")
+query = st.text_input('検索','')
+
+if query:
+    st.write("fetcing")
+    try:
+        # Create the embedding for the query
+        embedding = create_embedding(query)
+        #st.write("Generated Embedding:", embedding)
+        
+        # Find similar documents in the MongoDB collection
+        similar_documents = find_similar_documents(embedding)
+        #st.write("Similar Documents:", similar_documents)
+
+        
+        
+        # Get the document with the highest score
+        highest_score_doc = get_highest_score_document(similar_documents)
+        
+        if highest_score_doc:
+            st.success("Document with the highest score:")
+            st.write(similar_documents)
+            #st.write(f"id: {highest_score_doc['_id']}")
+            #st.write(f"Text: {highest_score_doc['contents']}")
+            #st.write(f"Score: {highest_score_doc['score']}")
+        else:
+            st.warning("No similar documents found.")
+    
+    except Exception as err:
+        st.error(f"Error: {err}")
 
 import streamlit as st
 import asyncio
@@ -82,7 +112,6 @@ def show_nippo(nippos):
         # Optionally, you can perform more logic depending on the returned data
         if "Nippo ID" in data:
             st.session_state['selected_nippo_id'] = nippo_id
-            #st.success(f"Details fetched for {data}")
             st.switch_page("pages/nippo_details.py") 
 
 # Main async function to run the app
@@ -100,9 +129,7 @@ async def main():
     data = {
     "報告者": list(users),
     "企業名": list(customers),
-    "訪問時間": ["2024-08-20 10:00", "2024-08-21 14:00", "2024-08-22 09:00"],
     "訪問目的": list(purposes),
-    "お客様の課題": ["価格競争が激しい", "納期の短縮", "競合他社が強力"],
     }
 
     # 検索フォーム
@@ -110,8 +137,7 @@ async def main():
     selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
-    #value = st.sidebar.slider('値を選択してください', 0, 100, 50)
-    #st.write('選択した値は:', value)
+
 
     show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
     
