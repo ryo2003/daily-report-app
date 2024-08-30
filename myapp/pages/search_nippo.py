@@ -30,8 +30,7 @@ if query:
         similar_documents = find_similar_documents(embedding)
         #st.write("Similar Documents:", similar_documents)
 
-        
-        
+    
         # Get the document with the highest score
         highest_score_doc = get_highest_score_document(similar_documents)
         

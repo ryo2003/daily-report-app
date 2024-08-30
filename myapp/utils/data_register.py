@@ -1,7 +1,9 @@
-import os
+import os, sys
 from bson import ObjectId
 import streamlit as st
 from pymongo import MongoClient
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+from vector_search import create_embedding
 from dotenv import load_dotenv
 load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
@@ -29,7 +31,8 @@ def submit_byhands_new(submit_data,submit_user_id,event_data):
         "customer":submit_data["企業名"],
         "chat_log_id":None,
         "timestamp":dt_now,
-        "event_time":datetime.datetime.fromisoformat(event_time)
+        "event_time":datetime.datetime.fromisoformat(event_time),
+        "embedding":create_embedding(submit_data["本文"],submit_data["訪問目的"])
     }
     collection.insert_one(newdata)
     
