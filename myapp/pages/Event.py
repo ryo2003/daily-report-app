@@ -10,7 +10,6 @@ from data_register import insert_chat
 
 if st.session_state.get('event_data'):
     event_data = st.session_state['event_data']
-    st.write(event_data)
     id = event_data['id']
     title = event_data['title']
     start_time = event_data['start']

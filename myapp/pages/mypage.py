@@ -42,7 +42,7 @@ async def main():
     # クエリパラメータを設定して、search.pyページに遷移
         st.switch_page("pages/search_nippo.py")
 
-
+    
     client = get_client()
     filter={"user_id": user_id}
     await init_database(client,models=[Event])
@@ -85,6 +85,7 @@ async def main():
 
     # eventClick コールバックの処理
     if cal.get("eventClick"):
+        print(cal)
         event_data = cal["eventClick"]["event"]
         st.session_state['show_modal'] = True
         st.session_state['event_data'] = event_data  # イベントデータを保存

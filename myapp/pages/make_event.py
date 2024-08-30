@@ -31,14 +31,25 @@ with st.form("event_form"):
     start_datetime = datetime.combine(start_date,start_time)
     
     # イベントの終了時間の入力
-    end_date = st.date_input("開始日",value=datetime.now(),key="end_day")
+    end_date = st.date_input("開始日",value=datetime.now(),key="end_date")
     end_time = st.time_input("終了時間", value=datetime.now(),key="end_time")
     end_datetime = datetime.combine(end_date,end_time)
     # 住所の入力
     address = st.text_input("住所", placeholder="例: 東京都千代田区1-1-1")
     
     # 目的の入力
-    purpose = st.text_input("目的", placeholder="例: 新規提案")
+    purpose_options = [
+    "電話対応",
+    "提案・見積もり",
+    "CS訪問",
+    "ヒアリング",
+    "納品",
+    "クロージング",
+    "その他"
+    ]   
+
+# セレクトボックスの作成
+    purpose = st.selectbox("対応内容を選択してください:", purpose_options)
     
     # 送信ボタン
     submitted = st.form_submit_button("送信")
