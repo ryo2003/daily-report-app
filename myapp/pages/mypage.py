@@ -37,6 +37,11 @@ async def main():
     calendar_options = {
         "minTime":'08:00:00',
         "maxTime": '18:00:00', 
+        "headerToolbar": {
+            "left": "today prev,next",
+            "center": "title",
+            "right": "list,timelineWeek,dayGridMonth",
+        },
     }
     json_open = open("demo_data.json", 'r')
     calendar_events_b = json.load(json_open)

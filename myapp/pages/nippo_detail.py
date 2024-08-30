@@ -7,8 +7,10 @@ import asyncio
 from st_bridge import bridge, html
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import  init_database, fetch_async, get_username,get_client
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from data_fetch import  init_database, fetch_async, get_username,get_client
+from component_list import icon_toggle,icon_emb
 async def main():
     # ログインしているユーザのid取得
     user_id = st.session_state.get("success_id")
@@ -62,14 +64,12 @@ async def main():
         </div>
     </div>
         <div class="d-flex">
-<input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
-<label class="btn btn-outline-primary mx-1" for="btn-check-outlined" onClick="stBridges.send('iine_{nippo_id}', 'clicked')"><i class="bi bi-hand-thumbs-up-fill"></i>
-</label>
 <div>
-    <input type="checkbox" class="btn-check" id="btn-check-2-outlined" autocomplete="off">
-    <label class="btn btn-outline-secondary mx-1" for="btn-check-2-outlined" onClick="stBridges.send('stock_{nippo_id}', 'clicked')">
-    <i class="bi bi-bookmark"></i></label><br>
-</button>
+{icon_toggle("hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked",color="btn-outline-primary")}
+</div>
+
+<div>
+{icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked")}
 </div>
 """)
    

@@ -24,7 +24,10 @@ if st.session_state.get('event_data'):
     calendar_options = {
         "initialView": 'timelineDay',
         "initialDate":start_time,
-        "height": 200
+        "height": 200,
+        "minTime":'08:00:00',
+        "maxTime": '18:00:00', 
+
     }
     calendar_events=[{
         "id": str(id),
@@ -63,7 +66,7 @@ allowfullscreen=""
 aria-hidden="false"
 tabindex="0"
 />
-                """,unsafe_allow_html=True)
+""",unsafe_allow_html=True)
     
     # ダイアログの表示制御
     toggle = bridge(f"toggle", default="")
