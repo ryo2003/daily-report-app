@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/ut
 
 from chat import create_question, create_nippo, get_chatlog, add_chatlog, \
 pop_chatlog, make_nippo_data, extract_keys_from_json, get_category, \
-add_catdata, reset_log
+add_catdata, reset_log, get_event_info
 
 def main():
 
@@ -35,6 +35,8 @@ def main():
         if 'chatlog_id' not in st.session_state or 'event_id' not in st.session_state:
             st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
             st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
+        
+        st.session_state.event_datas = get_event_info(st.session_state.event_id)
         
         print("st.session_state.chatlog_id",st.session_state.chatlog_id)
         print("get_chatlog(st.session_state.chatlog_id)",get_chatlog(st.session_state.chatlog_id))
@@ -89,8 +91,6 @@ def main():
         reset_log(st.session_state.chatlog_id)
         st.rerun()
     
-    
-    
     user_msg = st.chat_input("ここにメッセージを入力!")
 
     if user_msg or make_nippo or save_nippo:
@@ -115,7 +115,7 @@ def main():
                 pop_chatlog(st.session_state.chatlog_id)
                 print("st.session_state.chat_log",st.session_state.chat_log)
         else:
-            assistant_msg=create_question(st.session_state.chat_log + [{"name": USER_NAME, "msg": user_msg}])
+            assistant_msg=create_question(st.session_state.chat_log + [{"name": USER_NAME, "msg": user_msg}], st.session_state.event_datas)
             with st.chat_message(USER_NAME):
                 st.write(user_msg)
             

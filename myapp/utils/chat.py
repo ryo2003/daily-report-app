@@ -17,7 +17,7 @@ def extract_keys_from_json(filename):
     keys_list = list(data.keys())
     return keys_list
 
-def create_question(chatlog: list[dict]) -> str:
+def create_question(chatlog: list[dict], other_info : dict) -> str:
     # return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
@@ -30,9 +30,11 @@ def create_question(chatlog: list[dict]) -> str:
     azure_endpoint =api_base
     )
 
-    prompt = '以下の会話をもとに、ステップバイステップで日報作成に必要な情報を聞き出すような質問をしてください。'
+    print("other_info",other_info)
+    prompt = f"""あなたは完璧な日報作成システムです。日報作成にあたって必要な情報をユーザーから聞き出したください。ただし、1回の発話では1個のことについて聞くことを心がけてください。また、答えやすい質問を心がけてください。日報のカテゴリーは{other_info.get('purpose', '')}で、相手の企業名は{other_info.get('customer', '')}、日時は{other_info.get('start_time', '')}、場所は{other_info.get('address', '')}です。"""
     mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
     print("mess",mess)
+
     try:
         response = client.chat.completions.create(
             model=model_name , # model = "deployment_name".
@@ -98,6 +100,20 @@ def get_category(chatlogId) -> str:
         return ""
     
     return chatlog.get("category", "")
+
+def get_event_info(eventId) -> dict:
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['event']
+
+    event = collection.find_one({"_id": eventId})
+
+    if event is None:
+        return {}
+    
+    return event
+
 
 def add_catdata(chatlogId, category):
     mongo_uri = os.getenv('MONGO_URI')
