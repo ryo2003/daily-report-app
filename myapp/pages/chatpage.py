@@ -15,9 +15,9 @@ def main():
 
     if st.session_state.get('event_data'):
         event_data = st.session_state['event_data']
-        st.title(f"{event_data['title']}のチャットサンプル")
+        st.title(f"{event_data['title']}の日報作成チャット")
     else:
-        st.title("NoEventチャットサンプル")
+        st.title("NoEventの日報作成チャット")
     # 定数定義
     USER_NAME = "user"
     ASSISTANT_NAME = "assistant"
@@ -53,7 +53,7 @@ def main():
         add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
 
 
-    if st.session_state.nippo_cat == "":
+    if st.session_state.event_datas.get("purpose") == None:
         cat = st.selectbox(
             "日報のカテゴリを選択してください", 
             st.session_state.report_class,
@@ -98,7 +98,7 @@ def main():
         if save_nippo:
             user_msg = "日報を保存。"
             with st.chat_message(USER_NAME):
-                st.write(user_msg)
+                st.success("日報を保存しました。")
             make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, "営業", st.session_state.chatlog_id)
             assistant_msg = "日報を保存しました。"
 

@@ -9,6 +9,8 @@ from datetime import datetime
 import pytz
 import json
 
+from utils.vector_search import create_embedding
+
 load_dotenv()
 
 def extract_keys_from_json(filename):
@@ -41,7 +43,7 @@ def create_question(chatlog: list[dict], other_info : dict) -> str:
             messages = mess,
         )
     except Exception as e:
-        return 'エラーが発生しました。'
+        return 'その質問には回答できません。'
     
     return response.choices[0].message.content
 
@@ -199,7 +201,8 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
         "customer": customer,
         "chat_log_id": chatlogId,
         "timestamp": datetime.now() + pytz.timezone('Asia/Tokyo').utcoffset(datetime.now()),
-        "event_time": event_time
+        "event_time": event_time,
+        "embedding": create_embedding(nippo, purpose)
     }
 
     res = collection.insert_one(nippo_data)
