@@ -23,7 +23,8 @@ def parse2fullcal(events):
             "start": event.start_time.isoformat(),
             "end": event.end_time.isoformat(),
             "extendedProps": {
-                "address": event.address
+                "address": event.address,
+                "purpose": event.purpose
             }
         }
         fullcalendar_events.append(fullcalendar_event)
@@ -50,11 +51,12 @@ async def main():
     calendar_events = parse2fullcal(events_list)
     print("aaakfherogiah",calendar_events)
     calendar_options = {
-                
+        "minTime":'08:00:00',
+        "maxTime": '18:00:00', 
         "headerToolbar": {
             "left": "today prev,next",
             "center": "title",
-            "right": "dayGridDay,dayGridWeek,dayGridMonth",
+            "right": "list,timelineWeek,dayGridMonth",
         },
     }
     json_open = open("demo_data.json", 'r')

@@ -1,8 +1,8 @@
 streamlit 
-streamlit-calendar
-streamlit_text_rating
 pymongo
 openai
+streamlit-calendar
 python-dotenv
 beanie
 asyncio
+streamlit_bridge

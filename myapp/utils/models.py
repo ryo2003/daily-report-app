@@ -27,6 +27,7 @@ class Event(Document):
     start_time: datetime
     end_time: datetime
     address: str
+    purpose: str
     
     class Settings:
         name = "event"

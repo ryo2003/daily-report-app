@@ -14,17 +14,34 @@ dt_now = datetime.datetime.now()
 client = MongoClient(mongo_URI)
 db = client["mydb"]  # Replace with your database name
 
-# submit nippo byhands
-def submit_byhands_new(submit_data,submit_user_id,event_data):
-    # submit_data is dictionary containing data user input on createbyhands page
+from bson import ObjectId
+import datetime
+
+def nippo_exist(event_data):
+    collection = db["nippo"]
+    events = db["event"]
+    event_time = event_data["start"]
+    # Check if the event already has a nippo_id
+    event = events.find_one({"_id": ObjectId(event_data["id"])})
+    existing_nippo_id = event.get("nippo_id")
+    return existing_nippo_id
+
+    # If a nippo_id already exists, prompt for overwrite confirmation
+def submit_byhands_new(submit_data, submit_user_id, event_data,exist_id):
+    # submit_data is a dictionary containing data user input on createbyhands page
     collection = db["nippo"]
     events = db["event"]
     event_time = event_data["start"]
 
+    if exist_id != None:
+        # Delete the old nippo document
+        collection.delete_one({"_id": exist_id})
+
+
     newdata = {
-        "user_id":submit_user_id,
-        "event_id":ObjectId(event_data["id"]),
-        "contents":submit_data["本文"],
+        "user_id": submit_user_id,
+        "event_id": ObjectId(event_data["id"]),
+        "contents": submit_data["本文"],
         "good": [],
         "bookmark":[],
         "purpose":submit_data["訪問目的"],
@@ -35,6 +52,19 @@ def submit_byhands_new(submit_data,submit_user_id,event_data):
         "embedding":create_embedding(submit_data["本文"],submit_data["訪問目的"])
     }
     collection.insert_one(newdata)
+
+    # Inserting the new document into the nippo collection
+    nippo_result = collection.insert_one(newdata)
+    
+    # Fetching the newly created _id from nippo collection
+    nippo_id = nippo_result.inserted_id
+
+    # Updating the event document with the new nippo_id
+    events.update_one(
+        {"_id": ObjectId(event_data["id"])},
+        {"$set": {"nippo_id": nippo_id}}
+    )
+
     
 def insert_chat(event_id,user_id):
     try:
