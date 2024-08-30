@@ -1,13 +1,14 @@
+import os
+import sys
 import streamlit as st
 import pandas as pd
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from bson import ObjectId
 from st_bridge import bridge, html
 
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
+from component_list import nippo_card
 users = set()
 customers = set()
 purposes = set()
@@ -49,6 +50,7 @@ def show_nippo(nippos):
         customer = nippo.customer
         src_time = nippo.timestamp
         nippo_id = nippo.id
+        contents = nippo.contents
         #st.write(nippo_id)
         
         # Store nippo_id in session state for each nippo when the link is clicked
@@ -58,16 +60,8 @@ def show_nippo(nippos):
         data = bridge(f"nippo-bridge-{nippo_id}", default="No button is clicked", key=f"bridge-key-{nippo_id}")
 
         # Define HTML with JavaScript to handle button clicks
-        html(f"""
-        <div style="background-color: whitesmoke; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-            <div style="font-size: 16px; color: dimgray;">Username: {username}</div>
-            <div style="font-size: 16px; color: dimgray;">Purpose: {purpose}</div>
-            <div style="font-size: 16px; color: dimgray;">Customer: {customer}</div>
-            <div style="font-size: 12px; color: green;">{src_time}</div>
-            <button style="margin-top: 10px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;" 
-                    onClick="stBridges.send('nippo-bridge-{nippo_id}', 'Nippo ID: {nippo_id}')">View Details</button>
-        </div>
-        """, key=f"html-key-{nippo_id}")
+        html_tem = nippo_card(username,purpose,customer,src_time,nippo_id,contents)
+        html(html_tem, key=f"html-key-{nippo_id}")
 
         # Display the data returned by the bridge (based on which button was clicked)
         #st.write(data)
@@ -76,4 +70,5 @@ def show_nippo(nippos):
         if "Nippo ID" in data:
             st.session_state['selected_nippo_id'] = nippo_id
             #st.success(f"Details fetched for {data}")
-            st.switch_page("pages/nippo_details.py") 
+            st.switch_page("pages/nippo_detail.py") 
+        

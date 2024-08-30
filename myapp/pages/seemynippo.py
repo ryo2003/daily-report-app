@@ -28,7 +28,6 @@ async def main():
     nippo_data = await fetch_async()
     get_attributes(nippo_data)
 
-    st.write("Nippo Data:")
     
 
     data = {
