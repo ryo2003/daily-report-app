@@ -2,11 +2,12 @@ import streamlit as st
 import pandas as pd
 import sys
 import os
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from search_utils import show_nippo
 from vector_search import create_embedding, find_similar_documents, get_highest_score_document
-
+from types import SimpleNamespace
 from bson import ObjectId
 from st_bridge import bridge, html
 
@@ -22,32 +23,7 @@ st.title("日報検索")
 
 query = st.text_input('検索','')
 
-if query:
-    st.write("fetcing")
-    try:
-        # Create the embedding for the query
-        embedding = create_embedding(query)
-        #st.write("Generated Embedding:", embedding)
-        
-        # Find similar documents in the MongoDB collection
-        similar_documents = find_similar_documents(embedding)
-        #st.write("Similar Documents:", similar_documents)
 
-    
-        # Get the document with the highest score
-        highest_score_doc = get_highest_score_document(similar_documents)
-        
-        if highest_score_doc:
-            st.success("Document with the highest score:")
-            st.write(similar_documents)
-            #st.write(f"id: {highest_score_doc['_id']}")
-            #st.write(f"Text: {highest_score_doc['contents']}")
-            #st.write(f"Score: {highest_score_doc['score']}")
-        else:
-            st.warning("No similar documents found.")
-    
-    except Exception as err:
-        st.error(f"Error: {err}")
 
 
 import streamlit as st
@@ -143,10 +119,55 @@ async def main():
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
 
+    if query:
+        st.write("検索結果：")
+        try:
+            nippo_obj = []
+            # Create the embedding for the query
+            embedding = create_embedding(query)
+            #st.write("Generated Embedding:", embedding)
+            
+            # Find similar documents in the MongoDB collection
+            similar_documents = find_similar_documents(embedding)
+            #st.write("Similar Documents:", similar_documents)
 
-    show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
+        
+            # Get the document with the highest score
+            highest_score_doc = get_highest_score_document(similar_documents)
 
+            for document in similar_documents:
+                namespace = SimpleNamespace(**document)
+                nipp = new_namespace = SimpleNamespace(
+                        id=namespace._id, #needs to convert _id to id
+                        user_id=namespace.user_id,
+                        event_id=namespace.event_id,
+                        contents=namespace.contents,
+                        good=namespace.good,
+                        bookmark=namespace.bookmark,
+                        purpose=namespace.purpose,
+                        customer=namespace.customer,
+                        chat_log_id=namespace.chat_log_id,
+                        timestamp=namespace.timestamp,
+                        event_time=namespace.event_time,
+                        embedding=namespace.embedding
+                    )
+                nippo_obj.append(nipp) 
+                #st.write(obj)
 
+            
+            if highest_score_doc:
+                show_nippo(select_nippo(nippo_obj,selected_name,selected_company,selected_purpose))
+                #st.write(similar_documents)
+                #st.write(f"id: {highest_score_doc['_id']}")
+                #st.write(f"Text: {highest_score_doc['contents']}")
+                #st.write(f"Score: {highest_score_doc['score']}")
+            else:
+                st.warning("No similar documents found.")
+        
+        except Exception as err:
+            st.error(f"Error: {err}")
+    else:
+        show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
 
 # Entry point for the application
 asyncio.run(main())
