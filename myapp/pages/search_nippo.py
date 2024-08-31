@@ -115,6 +115,13 @@ async def main():
 
     # 検索フォーム
     st.sidebar.header("検索条件")
+    sort_type = st.sidebar.selectbox("並べ替え",options=["新しい順","古い順","いいねが多い順"])
+    if sort_type == "新しい順":
+        sort_type = "newest"
+    elif sort_type == "古い順":
+        sort_type = "oldest"
+    elif sort_type == "いいねが多い順":
+        sort_type = "most_likes"
     selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))
@@ -167,7 +174,7 @@ async def main():
         except Exception as err:
             st.error(f"Error: {err}")
     else:
-        show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose))
+        show_nippo(select_nippo(nippo_data,selected_name,selected_company,selected_purpose),sort_type)
 
 # Entry point for the application
 asyncio.run(main())

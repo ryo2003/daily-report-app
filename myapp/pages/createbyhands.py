@@ -8,7 +8,7 @@ from datetime import datetime
 userid = st.session_state.get("success_id")
 
 event_data = st.session_state.get("event_data")
-event_id = event_data["_id"]
+event_id = event_data["id"]
 event_purpose = event_data["extendedProps"]["purpose"]
 company_name = event_data["title"]
 visit_time = event_data["start"]
