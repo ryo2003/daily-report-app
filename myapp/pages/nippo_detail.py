@@ -91,6 +91,10 @@ async def main():
     if stock_data:
         st.write(stock_data)
         print("ストックされました")
+    
+    if user_id == author_id:
+        if st.button("編集する"):
+            st.switch_page("pages/editpage.py")
 
     
         
