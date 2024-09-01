@@ -13,6 +13,67 @@ from utils.vector_search import create_embedding
 
 load_dotenv()
 
+def save_new_chatlog(user_id: ObjectId, log_data : list[dict], category : str, nippo_id : ObjectId = ObjectId()):
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['chat_log']
+
+    chatlog_data = {
+        "user_id": user_id,
+        "log_data": log_data,
+        "nippo_id": nippo_id,
+        "category": category,
+    }
+
+    res = collection.insert_one(chatlog_data)
+    return res.inserted_id
+
+def get_data(eventId):
+    res = {"event": {}, 'chatlog_id' : ObjectId(), "chatlog": [], "category": ""}
+    if not eventId:
+        print("event idがないよー")
+        return res
+
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['event']
+
+    event = collection.find_one({"_id": eventId})
+    if event is None:
+        print(f"idが{eventId}のイベントはないよー")
+        return res
+    
+    res["event"] = event
+    
+    chatlogId = event.get("chatlog_id", ObjectId())
+    res["chatlog_id"] = chatlogId
+    if chatlogId:
+        collection = db['chat_log']
+        chatlog = collection.find_one({"_id": chatlogId})
+        if event.get("purpose", "") and not chatlog.get("category", ""):
+            collection.update_one(
+                {"_id": chatlogId},
+                {"$set": {"category": event.get("purpose", "")}}
+            )
+        if chatlog:
+            res["chatlog"] = chatlog.get("log_data", [])
+            res['category'] = chatlog.get("category", "")
+            return res
+    
+    res["chatlog"] = []
+    res['category'] = event.get("purpose", "")
+    chatlogId = save_new_chatlog(event["user_id"], [], event.get("purpose", ""))
+    res["chatlog_id"] = chatlogId
+    collection = db['event']
+    collection.update_one(
+        {"_id": eventId},
+        {"$set": {"chatlog_id": chatlogId}}
+    )
+
+    return res
+
 def extract_keys_from_json(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -33,7 +94,12 @@ def create_question(chatlog: list[dict], other_info : dict) -> str:
     )
 
     print("other_info",other_info)
-    prompt = f"""あなたは完璧な日報作成システムです。日報作成にあたって必要な情報をユーザーから聞き出したください。ただし、1回の発話では1個のことについて聞くことを心がけてください。また、答えやすい質問を心がけてください。日報のカテゴリーは{other_info.get('purpose', '')}で、相手の企業名は{other_info.get('customer', '')}、日時は{other_info.get('start_time', '')}、場所は{other_info.get('address', '')}です。関係ない話をしたときは、「その質問には回答できません。」と返答してください。"""
+    prompt = f"""
+    あなたは完璧な日報作成システムです。日報作成にあたって必要な情報をユーザーから聞き出したください。
+    ただし、1回の発話では1つのことについて質問し、具体的で答えやすい質問を心がけてください。
+    日報のカテゴリーは{other_info.get('purpose', '不明')}で、相手の企業名は{other_info.get('customer', '不明')}、日時は{other_info.get('start_time', '不明')}、場所は{other_info.get('address', '不明')}です。
+    関係ない話をしたときは、「その質問には回答できません。」と返答してください。
+    """
     mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
     print("mess",mess)
 
@@ -47,7 +113,7 @@ def create_question(chatlog: list[dict], other_info : dict) -> str:
     
     return response.choices[0].message.content
 
-def create_nippo(chatlog: list[dict]) -> str:
+def create_nippo(chatlog: list[dict], other_info) -> str:
     # return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
@@ -60,18 +126,38 @@ def create_nippo(chatlog: list[dict]) -> str:
     azure_endpoint =api_base
     )
 
-    prompt = '以下の会話をもとに、hallucinationに気をつけて日報を作成してください。'
-    mess = [{"role": "system", "content": prompt}] + [{"role": chat["name"], "content": chat["msg"]} for chat in chatlog]
+    conversation_text = "\n".join([f"{chat['name']}: {chat['msg']}" for chat in chatlog])
+
+    prompt = f"""
+    以下の対話履歴に基づいて、日報の本文を作成してください
+    日報のカテゴリーは{other_info.get('purpose', '不明')}で、相手の企業名は{other_info.get('customer', '不明')}、日時は{other_info.get('start_time', '不明')}、場所は{other_info.get('address', '不明')}です。：
+
+    注意1: 日報本文には、「お疲れ様です。」などの本文以外の情報は含めないでください。
+    注意2: 日報のカテゴリー、相手の企業名、日時、場所は、日報本文には含めないでください。
+
+    対話履歴：
+    {conversation_text}
+
+    日報本文：
+    """
+    mess = [{"role": "system", "content": prompt}]
     print("mess",mess)
+
     try:
         response = client.chat.completions.create(
             model=model_name ,
             messages = mess,
+            max_tokens = 300,
+            temperature = 0.5,
+            stop=["質問", "続ける", "教えて"]  # 必要に応じてストップワードを設定
         )
+        print("daily_report",response)
+        daily_report = response.choices[0].message.content
     except Exception as e:
         return 'エラーが発生しました。'
 
-    return response.choices[0].message.content
+    print("response",response)
+    return daily_report
 
 def get_chatlog(chatlogId) -> list:
     print("call get_chatlog!!!!")
@@ -103,7 +189,25 @@ def get_category(chatlogId) -> str:
     
     return chatlog.get("category", "")
 
+def get_chatlog(eventId) -> ObjectId:
+    mongo_uri = os.getenv('MONGO_URI')
+    client = MongoClient(mongo_uri)
+    db = client['mydb']
+    collection = db['event']
+
+    event = collection.find_one({"_id": eventId})
+    if event is None:
+        return None
+    
+    chatlogId = event.get("chatlog_id", None)
+    if chatlogId is None:
+        return None
+
+
 def get_event_info(eventId) -> dict:
+    if not eventId:
+        return {}
+    
     mongo_uri = os.getenv('MONGO_URI')
     client = MongoClient(mongo_uri)
     db = client['mydb']
@@ -116,7 +220,6 @@ def get_event_info(eventId) -> dict:
     
     return event
 
-
 def add_catdata(chatlogId, category):
     mongo_uri = os.getenv('MONGO_URI')
     client = MongoClient(mongo_uri)
@@ -126,6 +229,9 @@ def add_catdata(chatlogId, category):
     collection.update_one({"_id": chatlogId}, {"$set": {"category": category}}, upsert=True)
 
 def add_chatlog(chatlogId, chatlog):
+    if not chatlogId:
+        return
+    
     mongo_uri = os.getenv('MONGO_URI')
     client = MongoClient(mongo_uri)
     db = client['mydb']
@@ -150,13 +256,15 @@ def pop_chatlog(chatlogId):
     )
     return
 
-def reset_log(chatlogId):
+def reset_log(chatlogId : ObjectId, category : str):
+    print("reset_log chatlogId: ",chatlogId)
+    print("reset_log category: ",category)
     mongo_uri = os.getenv('MONGO_URI')
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
 
-    collection.update_one({"_id": chatlogId}, {"$set": {"log_data": []}})
+    collection.update_one({"_id": chatlogId}, {"$set": {"log_data": [], "category": category}})
     return
 
 def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : ObjectId = None):
