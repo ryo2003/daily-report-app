@@ -13,6 +13,10 @@ import asyncio
 mongo_URI = os.getenv("MONGO_URI")
 client = MongoClient(mongo_URI)
 db = client["mydb"]
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
 
 #ユーザid取得
 userid = st.session_state.get("success_id")

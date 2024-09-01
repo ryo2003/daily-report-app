@@ -11,6 +11,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/ut
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
 from data_fetch import  init_database, fetch_async, get_username,get_client
 from component_list import icon_toggle,icon_emb
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
 async def main():
     # ログインしているユーザのid取得
     user_id = st.session_state.get("success_id")
@@ -85,6 +91,8 @@ async def main():
     if stock_data:
         st.write(stock_data)
         print("ストックされました")
+
+    
         
         
 asyncio.run(main())

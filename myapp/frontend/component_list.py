@@ -36,3 +36,29 @@ def nippo_card(username,purpose,customer,src_time,nippo_id,contents):
     """
     return html_tem
 #個別の関数
+
+
+def hide_sidebar():
+    css ='''
+    <style>
+        [data-testid="stSidebar"] {
+            display: none;
+        }
+    </style>
+    '''
+    st.markdown(css, unsafe_allow_html=True)
+
+def hide_side_button():
+    not_showing = ["","createbyhands","Event","editpage","nippo_detail","chatpage"]
+
+    for i in not_showing:
+        st.markdown(
+        f"""
+        <style>
+        [data-testid="stSidebarNavLink"][href$="/{i}"] {{
+            display: none;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+        )

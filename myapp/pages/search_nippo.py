@@ -10,6 +10,11 @@ from vector_search import create_embedding, find_similar_documents, get_highest_
 from types import SimpleNamespace
 from bson import ObjectId
 from st_bridge import bridge, html
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
 
 
 # 仮の日報データ
@@ -103,9 +108,6 @@ async def main():
     
     nippo_data = await fetch_async()
     get_attributes(nippo_data)
-    get_attributes(nippo_data)
-
-    
 
     data = {
     "報告者": list(users),
@@ -116,12 +118,6 @@ async def main():
     # 検索フォーム
     st.sidebar.header("検索条件")
     sort_type = st.sidebar.selectbox("並べ替え",options=["新しい順","古い順","いいねが多い順"])
-    if sort_type == "新しい順":
-        sort_type = "newest"
-    elif sort_type == "古い順":
-        sort_type = "oldest"
-    elif sort_type == "いいねが多い順":
-        sort_type = "most_likes"
     selected_name = st.sidebar.selectbox("報告者を選択してください", options=[None] + data.get("報告者"))
     selected_company = st.sidebar.selectbox("企業名を選択してください", options=[None] + data.get("企業名"))
     selected_purpose = st.sidebar.selectbox("訪問目的を選択してください", options=[None] + data.get("訪問目的"))

@@ -11,6 +11,12 @@ from chat import create_question, create_nippo, get_chatlog, add_chatlog, \
 pop_chatlog, make_nippo_data, extract_keys_from_json, get_category, \
 add_catdata, reset_log
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
+
 def main():
 
     if st.session_state.get('event_data'):

@@ -51,7 +51,7 @@ def submit_byhands_new(submit_data, submit_user_id, event_data,exist_id):
         "event_time":datetime.datetime.fromisoformat(event_time),
         "embedding":create_embedding(submit_data["本文"],submit_data["訪問目的"])
     }
-    collection.insert_one(newdata)
+    #collection.insert_one(newdata)
 
     # Inserting the new document into the nippo collection
     nippo_result = collection.insert_one(newdata)

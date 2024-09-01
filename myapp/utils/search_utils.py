@@ -75,6 +75,12 @@ def show_nippo(nippos,sort_type=None):#sort_type = "newest", "oldest", "most_lik
             st.switch_page("pages/nippo_detail.py") 
         
 def sort_nippo(nippos,sort_type="newest"):
+    if sort_type == "新しい順":
+        sort_type = "newest"
+    elif sort_type == "古い順":
+        sort_type = "oldest"
+    elif sort_type == "いいねが多い順":
+        sort_type = "most_likes"
     sorted_list = sorted(nippos,key=lambda x: x.timestamp, reverse=True)
     if(sort_type == "oldest"):
         sorted_list = sorted(nippos,key=lambda x: x.timestamp)
