@@ -15,8 +15,9 @@ login = st.Page(page="pages/login.py",title = "login")
 event = st.Page(page="pages/Event.py",title = "event")
 seenippo = st.Page(page="pages/nippo_detail.py",title="日報詳細閲覧ページ",icon=":material/visibility:")
 seemynippo = st.Page(page="pages/seemynippo.py",title="自分の日報",icon=":material/visibility:")
-edit = st.Page(page="pages/editpage.py",title="日報の編集",icon=":material/edit:")
 
+edit = st.Page(page="pages/editpage.py",title="日報の編集",icon=":material/edit:")
+makeevent = st.Page(page="pages/make_event.py",title="イベントの作成",icon=":material/edit_calendar:")
 
 st.markdown("""
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
@@ -24,12 +25,8 @@ st.markdown("""
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
             """,unsafe_allow_html=True)
 
-if "success_id" not in st.session_state:
-    navigation = [login]
-else:
-    navigation = [my_profile,search,chat,seemynippo,edit]
 
-pg = st.navigation([login,top_page, my_profile,search,chat,create_by_hand,event,seenippo,seemynippo,edit])
+pg = st.navigation([login,top_page, my_profile,search,chat,create_by_hand,event,seenippo,seemynippo,edit,makeevent])
 
 
 

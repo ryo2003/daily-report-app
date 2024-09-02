@@ -84,3 +84,36 @@ def insert_chat(event_id,user_id):
     except:
         return 0
 
+def insert_event(user_id, company_name, start_time, end_time, address, purpose):
+    
+    events = db["event"]
+    chatlogs = db["chat_log"]
+    new_event = {
+        "user_id": user_id,
+        "customer": company_name,
+        "start_time": start_time,
+        "end_time": end_time,
+        "address": address,
+        "purpose": purpose
+    }
+
+    result = events.insert_one(new_event)
+
+    event_id = result.inserted_id
+    
+    new_chatlog = {
+        "user_id":ObjectId(user_id),
+        "event_id":ObjectId(event_id),
+        "event":[]
+    }
+
+    chatlog_result = chatlogs.insert_one(new_chatlog)
+    chatlog_id = chatlog_result.inserted_id
+    events.update_one(
+        {"_id": ObjectId(event_id)},
+        {"$set": {"chatlog_id": ObjectId(chatlog_id)}}
+    )
+
+
+    st.success("新しいイベントを登録しました!")
+    

@@ -28,7 +28,12 @@ purposes = set()
 async def main():
 
     client = get_client()
-    await init_database(client)
+    try:
+        nippo_data = await fetch_async()
+    except:
+        await init_database(client)
+        nippo_data = await fetch_async()
+    
     
     nippo_data = await fetch_async()
     for nippo in nippo_data:
@@ -38,6 +43,7 @@ async def main():
         purposes.add(purpose)
         customer = nippo.customer
         customers.add(customer)
+
 
     data = {
     "報告者": list(users),
