@@ -44,12 +44,7 @@ async def main():
         st.switch_page("pages/login.py")
 
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
-    if st.button("自分の書いた日報を見る"):
-        st.switch_page("pages/seemynippo.py")
-    
-    if st.button("他の人が書いた日報を見る"):
-    # クエリパラメータを設定して、search.pyページに遷移
-        st.switch_page("pages/search_nippo.py")
+
 
     if st.button("イベントを新しく登録"):
         st.switch_page("pages/make_event.py")
