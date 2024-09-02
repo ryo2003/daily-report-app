@@ -5,6 +5,7 @@ from bson import ObjectId
 import streamlit as st
 import asyncio
 from st_bridge import bridge, html
+from pymongo import MongoClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
@@ -14,8 +15,21 @@ from component_list import icon_toggle,icon_emb
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
 from component_list import hide_sidebar, hide_side_button
+from dotenv import load_dotenv
+load_dotenv()
+mongo_URI = os.getenv("MONGO_URI")
+client = MongoClient(mongo_URI)
+db = client["mydb"]
 
 hide_side_button()
+
+def on_button_click():
+    st.session_state['clicked'] = True
+    st.write("Button was clicked!")
+
+# Initialize session state
+if 'clicked' not in st.session_state:
+    st.session_state['clicked'] = False
 
 async def main():
     # ログインしているユーザのid取得
@@ -101,7 +115,51 @@ async def main():
         if st.button("編集する"):
             st.switch_page("pages/editpage.py")
 
+
+    like = st.toggle("like")
+    stock = st.toggle("stock")
+    collection = db["nippo"]
+
+    if user_id in collection.find_one({"_id": ObjectId(nippo_id)})["good"]:
+        like = True
     
-        
+    if user_id in collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]:
+        stock = True
+    
+    if like:
+        new_likes = collection.find_one({"_id": ObjectId(nippo_id)})["good"]
+        st.session_state["like"] = True
+        new_likes.append(user_id)
+        collection.update_one(
+            {"_id": ObjectId(nippo_id)},
+            {"$set": {"good": new_likes}}
+        )
+
+    else:
+        new_likes = collection.find_one({"_id": ObjectId(nippo_id)})["good"]
+        st.session_state["like"] = False
+        new_likes.remove(user_id)
+        collection.update_one(
+            {"_id": ObjectId(nippo_id)},
+            {"$set": {"good": new_likes}}
+        )
+    if stock:
+        new_bookmarks = collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]
+        st.session_state["stock"] = True
+        new_bookmarks.append(user_id)
+        collection.update_one(
+            {"_id": ObjectId(nippo_id)},
+            {"$set": {"bookmark": new_likes}}
+        )
+    else:
+        new_bookmarks = collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]
+        st.session_state["stock"] = False
+        new_bookmarks.remove(ObjectId(user_id))
+
+        collection.update_one(
+            {"_id": ObjectId(nippo_id)},
+            {"$set": {"bookmark": new_likes}}
+        )
+
         
 asyncio.run(main())
