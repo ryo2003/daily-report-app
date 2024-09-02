@@ -65,7 +65,10 @@ def main():
 
         if 'event_id' not in st.session_state:
             st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
+        else:
+            st.session_state.event_id = ObjectId(st.session_state.event_id)
         
+        print("st.session_state.event_id",st.session_state.event_id, type(st.session_state.event_id))
         data = get_data(st.session_state.event_id)
         
         st.session_state.event_data = data["event"]

@@ -45,13 +45,19 @@ def get_data(eventId):
         print(f"idが{eventId}のイベントはないよー")
         return res
     
+    print("event",event, type(event))
     res["event"] = event
     
     chatlogId = event.get("chatlog_id", ObjectId())
+    chatlogId = ObjectId(chatlogId)
     res["chatlog_id"] = chatlogId
     if chatlogId:
         collection = db['chat_log']
         chatlog = collection.find_one({"_id": chatlogId})
+        print('-'*100)
+        print("chatlog ID",chatlogId)
+        print(type(chatlogId))
+        print("chatlog",chatlog)
         if event.get("purpose", "") and not chatlog.get("category", ""):
             collection.update_one(
                 {"_id": chatlogId},
@@ -277,7 +283,7 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
 
     # 削除パート
     collection = db['event']
-    nippo_id = collection.find_one({"_id": eventId})["nippo_id"]
+    nippo_id = collection.find_one({"_id": eventId}).get("nippo_id", None)
     if nippo_id is not None:
         collection = db['nippo']
         if collection.find_one({"_id": nippo_id}) is not None:
