@@ -85,7 +85,13 @@ def sort_nippo(nippos,sort_type="newest"):
         sort_type = "oldest"
     elif sort_type == "いいねが多い順":
         sort_type = "most_likes"
+    elif sort_type == "ブックマークが多い順":
+        sort_type = "most_bookmarks"
     sorted_list = sorted(nippos,key=lambda x: x.timestamp, reverse=True)
     if(sort_type == "oldest"):
         sorted_list = sorted(nippos,key=lambda x: x.timestamp)
+    elif sort_type  == "most_likes":
+        sorted_list = sorted(nippos,key=lambda x: len(x.good))
+    elif sort_type == "most_bookmarks":
+        sorted_list = sorted(nippos,key=lambda x: len(x.bookmark))
     return sorted_list
