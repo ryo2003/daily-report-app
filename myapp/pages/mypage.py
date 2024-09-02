@@ -43,9 +43,9 @@ async def main():
     
     if username == "None":
         st.switch_page("pages/login.py")
+
     st.title("マイページ")
     
-
     # if st.button("自分の書いた日報を見る"):
     #     st.switch_page("pages/seemynippo.py")
     
