@@ -11,6 +11,7 @@ login = st.Page(page="pages/login.py",title = "login")
 event = st.Page(page="pages/Event.py",title = "event")
 seenippo = st.Page(page="pages/nippo_detail.py",title="日報詳細閲覧ページ",icon=":material/visibility:")
 seemynippo = st.Page(page="pages/seemynippo.py",title="自分の日報",icon=":material/visibility:")
+
 edit = st.Page(page="pages/editpage.py",title="日報の編集",icon=":material/edit:")
 makeevent = st.Page(page="pages/make_event.py",title="イベントの作成",icon=":material/edit_calendar:")
 

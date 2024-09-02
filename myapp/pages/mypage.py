@@ -50,8 +50,11 @@ async def main():
     
     client = get_client()
     filter={"user_id": user_id}
-    await init_database(client,models=[Event])
-    events_list = await fetch_async(filter,model=Event)
+    try:
+        events_list = await fetch_async(filter,model=Event)
+    except:
+        await init_database(client,models=[Event])
+        events_list = await fetch_async(filter,model=Event)
     calendar_events = parse2fullcal(events_list)
     print("aaakfherogiah",calendar_events)
     calendar_options = {

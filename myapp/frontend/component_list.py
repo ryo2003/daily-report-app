@@ -6,10 +6,17 @@ import random
 def icon_emb(icon_id: str) ->str:
     return f"<i class='bi bi-{icon_id}'></i></label>"
 
-def icon_toggle(icon_id: str,nippo_id : str,classes: list = [], click_output="clicked",color="btn-outline-secondary") -> str:
+def icon_toggle(icon_id: str,nippo_id : str,classes: list = [], click_output="clicked",color="btn-outline-secondary",bridge_key=None) -> str:
     classes = " ".join(classes)
     rnum=int(random.random()*1000)
-    html_output = f"""
+    if bridge_key:
+        html_output = f"""
+            <input type="checkbox" class="btn-check" id="btn-check-{rnum}-outlined" autocomplete="off">
+            <label class="btn {color} {classes}" for="btn-check-{rnum}-outlined" onClick="stBridges.send('{icon_id}_{nippo_id}', '{click_output}')" key={bridge_key}>
+            <i class="bi bi-{icon_id}"></i></label><br>
+        """
+    else:
+        html_output = f"""
         <input type="checkbox" class="btn-check" id="btn-check-{rnum}-outlined" autocomplete="off">
         <label class="btn {color} {classes}" for="btn-check-{rnum}-outlined" onClick="stBridges.send('{icon_id}_{nippo_id}', '{click_output}')">
         <i class="bi bi-{icon_id}"></i></label><br>
@@ -29,8 +36,21 @@ def nippo_card(username,purpose,customer,src_time,nippo_id,contents):
             </div>
             <p class="card-text"><i class="bi bi-building mx-1"></i> {customer}</p>
             <p class="card-text text-truncate">{contents}</p>
+        </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
             カテゴリー：<div href="#" class="btn btn-primary" class="text-light">
-            {purpose}</a>
+                {purpose}</a>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>
+                {icon_toggle("hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked",color="btn-outline-primary",bridge_key=f"bridge-key_i_{nippo_id}")} 
+            </div>
+            <div>
+                {icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked",bridge_key=f"bridge-key_b_{nippo_id}")}
+            </div>
         </div>
     </div>
     """

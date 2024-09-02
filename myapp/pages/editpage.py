@@ -22,11 +22,15 @@ async def main():
     # nippoid = st.session_state.get("justmade_nippo")
     client = get_client()
 
-    await init_database(client)
     #仮データ！！！書き換えが必要
     nippoid = ObjectId("66cfe05b8d90b8e8fead9689")  
 
-    nippo = await fetch_async(filter={"_id":nippoid},model=Nippo)
+    try:
+        nippo = await fetch_async(filter,model=Nippo)
+    except:
+        await init_database(client,models=[Nippo])
+        nippo = await fetch_async(filter={"_id":nippoid},model=Nippo)
+    
     nippo_data = nippo[0]
         # ヘッダー
 

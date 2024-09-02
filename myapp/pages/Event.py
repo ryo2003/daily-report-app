@@ -28,7 +28,7 @@ if st.session_state.get('event_data'):
         "initialView": 'timelineDay',
         "initialDate":start_time,
         "height": 200,
-        "minTime":'08:00:00',
+                "minTime":'08:00:00',
         "maxTime": '18:00:00', 
 
     }
