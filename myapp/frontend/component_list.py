@@ -69,7 +69,7 @@ def hide_sidebar():
     st.markdown(css, unsafe_allow_html=True)
 
 def hide_side_button():
-    not_showing = ["","createbyhands","Event","editpage","nippo_detail","chatpage"]
+    not_showing = ["","createbyhands","Event","editpage","nippo_detail","chatpage","make_event"]
 
     for i in not_showing:
         st.markdown(

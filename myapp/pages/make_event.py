@@ -9,8 +9,10 @@ from pymongo import MongoClient
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 from data_register import submit_byhands_new,nippo_exist,insert_event
-from models import Nippo
-from data_fetch import fetch_async,get_client,init_database
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
 
 mongo_URI = os.getenv("MONGO_URI")
 client = MongoClient(mongo_URI)
