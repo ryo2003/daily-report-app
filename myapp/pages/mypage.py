@@ -44,7 +44,7 @@ async def main():
     if username == "None":
         st.switch_page("pages/login.py")
 
-    st.title("マイページ")
+    st.title(name+"のマイページ")
     
     # if st.button("自分の書いた日報を見る"):
     #     st.switch_page("pages/seemynippo.py")
@@ -53,8 +53,6 @@ async def main():
     # # クエリパラメータを設定して、search.pyページに遷移
     #     st.switch_page("pages/search_nippo.py")
 
-    if st.button("イベントを新しく登録"):
-        st.switch_page("pages/make_event.py")
     
     client = get_client()
     filter={"user_id": user_id}
@@ -71,28 +69,18 @@ async def main():
         bookmark_info= await fetch_async(filter_bookmarks)
         
         
-    st.markdown(
-        f"""
-        <p class="h2 text-center">
-        <hr>
+    # st.markdown(
+    #     f"""
+    #     <p class="h2 text-center">
+    #     <hr>
 
-        <div class="card-body">
-            <p class="h5">ユーザネーム:{username}</p>
-            <p class="h3">名前　：{name}</p>
-            <p class="h3">入社日：2020年4月1日</p>
-            <p class="h3">所属　：営業部</p>
-        </div>
-        <hr>
-        """
-        ,unsafe_allow_html=True)
-    list_html="<h2>ブックマークした投稿</h2>"
-    for info in bookmark_info:
-        print(info)
-        nippo_customer=info.customer
-        nippo_purpose=info.purpose
-        nippo_contents=info.contents
-        list_html+=f"<div class='list-group-item'>{nippo_customer}-{nippo_purpose}<br>{nippo_contents}<hr></div>"
-    st.markdown(f"<div class='scrollable-list list-group-item-action'>"+list_html,unsafe_allow_html=True)
+    #     <div class="card-body">
+    #         <p class="h5">ユーザネーム:{username}</p>
+    #         <p class="h5">名前　：{name}</p>
+    #     </div>
+    #     <hr>
+    #     """
+    #     ,unsafe_allow_html=True)
     
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     calendar_events = parse2fullcal(events_list)
@@ -105,9 +93,10 @@ async def main():
             "right": "list,dayGridWeek,dayGridMonth",
         },
     }
-    json_open = open("demo_data.json", 'r')
-    calendar_events_b = json.load(json_open)
-    print(calendar_events,calendar_events_b)
+
+    if st.button("イベントを新しく登録"):
+        st.switch_page("pages/make_event.py")
+    
     custom_css="""
         .fc-event-past {
             opacity: 0.8;
@@ -136,6 +125,23 @@ async def main():
         st.session_state['show_modal'] = True
         st.session_state['event_data'] = event_data  # イベントデータを保存
         st.switch_page("pages/Event.py")
+    
+    # Define the header outside of the scrollable div
+    st.markdown("<h2>ブックマークした投稿</h2>", unsafe_allow_html=True)
+
+    # Define the scrollable list with improved styling
+    list_html = ""
+    for info in bookmark_info:
+        nippo_customer = info.customer
+        nippo_purpose = info.purpose
+        nippo_contents = info.contents
+        list_html += f"<div class='list-group-item' style='border: 1px solid #ddd; margin-bottom: 10px; padding: 10px; border-radius: 5px;'><strong>{nippo_customer} - {nippo_purpose}</strong><br><span>{nippo_contents}</span></div>"
+
+    # Render the scrollable div
+    st.markdown(
+        f"<div class='scrollable-list' style='height: 300px; overflow-y: scroll; padding-right: 10px; border: 1px solid #ccc; border-radius: 5px;'>{list_html}</div>",
+        unsafe_allow_html=True
+    )
 
 
 a = "createbyhands"
