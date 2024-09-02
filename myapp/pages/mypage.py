@@ -13,7 +13,6 @@ from models import Event
 
 
 
-
 def parse2fullcal(events):
     fullcalendar_events = []
     for event in events:
@@ -32,9 +31,12 @@ def parse2fullcal(events):
 
 async def main():
 
-    userid = st.session_state.get("success_id")
-    username = str(get_username(userid))
+    user_id = st.session_state.get("success_id")
+    username = str(get_username(user_id))
     
+    if username == "None":
+        st.switch_page("pages/login.py")
+
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     if st.button("自分の書いた日報を見る"):
         st.switch_page("pages/seemynippo.py")
@@ -43,7 +45,9 @@ async def main():
     # クエリパラメータを設定して、search.pyページに遷移
         st.switch_page("pages/search_nippo.py")
 
-    user_id=ObjectId("66cd29b9157702dc731b0fdd")
+    if st.button("イベントを新しく登録"):
+        st.switch_page("pages/make_event.py")
+    
     client = get_client()
     filter={"user_id": user_id}
     await init_database(client,models=[Event])

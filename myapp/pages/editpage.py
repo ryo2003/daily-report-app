@@ -41,25 +41,28 @@ async def main():
     st.text(f"投稿時間: {nippo_data.timestamp}")
     st.text(f"イベントの日時: {nippo_data.event_time}")
 
-
+    submit_contents = 0
 
     # contentsの編集フォーム
     
     st.write("### 内容の編集")
-    new_contents = st.text_area("本文", value=nippo_data.contents)
-    new_contents += "(修正済)"
+    with st.form("### 内容の編集"):
 
-    if st.button("修正"):
-        # 編集された内容を更新（保存処理は適宜実装）
-        if userid != nippo_data.user_id:
-            st.write("自分の作成した日報以外は編集できません")
-        else:
+        new_contents = st.text_area("本文", value=nippo_data.contents)
+        new_contents += "(修正済)"
+        #st.write(new_contents)
 
-            collection = db["nippo"]
-            collection.update_one(
-                {"_id": nippoid},
-                {"$set": {"contents": new_contents}}
-            )
-            st.success("修正が保存されました。")
+        if st.form_submit_button("修正"):
+            # 編集された内容を更新（保存処理は適宜実装）
+            if userid != nippo_data.user_id:
+                st.write("自分の作成した日報以外は編集できません")
+            else:
+                collection = db["nippo"]
+                collection.update_one(
+                    {"_id": nippoid},
+                    {"$set": {"contents": new_contents}}
+                )
+                st.success("修正が保存されました。")
 
 asyncio.run(main())
+
