@@ -105,8 +105,8 @@ def insert_event(user_id, company_name, start_time, end_time, address, purpose):
     event_id = result.inserted_id
     
     new_chatlog = {
-        "user_id":user_id,
-        "event_id":event_id,
+        "user_id":ObjectId(user_id),
+        "event_id":ObjectId(event_id),
         "event":[]
     }
 
@@ -114,7 +114,7 @@ def insert_event(user_id, company_name, start_time, end_time, address, purpose):
     chatlog_id = chatlog_result.inserted_id
     events.update_one(
         {"_id": ObjectId(event_id)},
-        {"$set": {"chatlog_id": chatlog_id}}
+        {"$set": {"chatlog_id": ObjectId(chatlog_id)}}
     )
 
 
