@@ -26,7 +26,7 @@ st.markdown("""
             """,unsafe_allow_html=True)
 
 
-pg = st.navigation([login,top_page, my_profile,search,chat,create_by_hand,event,seenippo,seemynippo,edit,makeevent])
+pg = st.navigation([login, my_profile,search,chat,create_by_hand,event,seenippo,seemynippo,edit,makeevent])
 
 
 
