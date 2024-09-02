@@ -90,9 +90,12 @@ async def main():
 
 
     client = get_client()
-    await init_database(client)
+    try:
+        nippo_data = await fetch_async()
+    except:
+        await init_database(client)
+        nippo_data = await fetch_async()
     
-    nippo_data = await fetch_async()
     get_attributes(nippo_data)
     get_attributes(nippo_data)
 

@@ -23,8 +23,12 @@ async def main():
     }
     # nippo_idからnippoデータを取得
     client = get_client()
-    await init_database(client)
-    nippo = await fetch_async(filter)
+    try:
+        nippo = await fetch_async(filter)
+    except:
+        await init_database(client)
+        nippo = await fetch_async(filter)
+    
     # nippo_idの日報の作成者をユーザID取得
     print(nippo)
     author_id = nippo[0].user_id
