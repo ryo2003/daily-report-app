@@ -25,16 +25,18 @@ userid = st.session_state.get("success_id")
 # フォームの作成
 with st.form("event_form"):
     # 顧客名の入力
+    time_9_am = datetime.now().replace(hour=9, minute=0, second=0, microsecond=0)
+    time_18 = datetime.now().replace(hour=18, minute=0, second=0, microsecond=0)
     company_name = st.text_input("顧客名", placeholder="例: ダミー株式会社")
     
     # イベントの開始時間の入力
     start_date = st.date_input("開始日", value=datetime.now(),key="startd_date")
-    start_time = st.time_input("開始時間", value=datetime.now(),key="start_time")
+    start_time = st.time_input("開始時間",value=time_9_am,key="start_time")
     start_datetime = datetime.combine(start_date,start_time)
     
     # イベントの終了時間の入力
     end_date = st.date_input("開始日",value=datetime.now(),key="end_date")
-    end_time = st.time_input("終了時間", value=datetime.now(),key="end_time")
+    end_time = st.time_input("終了時間",value=time_18,key="end_time")
     end_datetime = datetime.combine(end_date,end_time)
     # 住所の入力
     address = st.text_input("住所", placeholder="例: 東京都千代田区1-1-1")
