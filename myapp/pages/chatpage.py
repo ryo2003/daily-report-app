@@ -7,51 +7,30 @@ import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
-from chat import create_question, create_nippo, get_chatlog, add_chatlog, \
-pop_chatlog, make_nippo_data, extract_keys_from_json, get_category, \
-add_catdata, reset_log
+from chat import create_question, create_nippo, add_chatlog, \
+pop_chatlog, make_nippo_data, extract_keys_from_json, \
+add_catdata, reset_log, get_data
 
-def main():
+# 定数定義
+USER_NAME = "user"
+ASSISTANT_NAME = "assistant"
+MORIAGE_YAKU_NAME ="moriage"
 
+avator_img_dict = {
+    USER_NAME: "👤",
+    ASSISTANT_NAME: "🤖",
+    MORIAGE_YAKU_NAME: "🎉",
+}
+
+
+def page():
     if st.session_state.get('event_data'):
         event_data = st.session_state['event_data']
-        st.title(f"{event_data['title']}のチャットサンプル")
+        st.title(f"{event_data['customer']}の日報作成チャット")
     else:
-        st.title("NoEventチャットサンプル")
-    # 定数定義
-    USER_NAME = "user"
-    ASSISTANT_NAME = "assistant"
-    MORIAGE_YAKU_NAME ="moriage"
+        st.title("NoEventの日報作成チャット")
 
-    avator_img_dict = {
-        USER_NAME: "👤",
-        ASSISTANT_NAME: "🤖",
-        MORIAGE_YAKU_NAME: "🎉",
-    }
-
-    if 'initialized' not in st.session_state or not st.session_state.initialized:
-        st.session_state.report_class = extract_keys_from_json("report_category.json")
-        print("st.session_state.report_class",st.session_state.report_class)
-        if 'chatlog_id' not in st.session_state or 'event_id' not in st.session_state:
-            st.session_state.chatlog_id = ObjectId('66cd3e3a2dc71efad9fbd5df')
-            st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
-        
-        print("st.session_state.chatlog_id",st.session_state.chatlog_id)
-        print("get_chatlog(st.session_state.chatlog_id)",get_chatlog(st.session_state.chatlog_id))
-
-        # チャットログを保存したセッション情報を初期化
-        st.session_state.chat_log = get_chatlog(st.session_state.chatlog_id)
-        st.session_state.nippo_cat = get_category(st.session_state.chatlog_id)
-
-        st.session_state.initialized = True
-
-    if st.session_state.chat_log == []:
-        assistant_msg = "お疲れ様です。今回の営業で同行者はいましたか？"
-        st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
-        add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
-
-
-    if st.session_state.nippo_cat == "":
+    if not st.session_state.nippo_cat:
         cat = st.selectbox(
             "日報のカテゴリを選択してください", 
             st.session_state.report_class,
@@ -67,15 +46,49 @@ def main():
             with st.chat_message(ASSISTANT_NAME):
                 st.write(f"日報のカテゴリを{cat}に設定しました。")
             st.rerun()
-
-    if st.session_state.nippo_cat != "":
+    
+    if st.session_state.nippo_cat:
         st.write(f"日報のカテゴリは{st.session_state.nippo_cat}です。")
         for chat in st.session_state.chat_log:
             print("chat",chat)
-            print()
             avator = avator_img_dict.get(chat["name"], None)
             with st.chat_message(chat["name"]):
                 st.write(chat["msg"])
+        print("end chat")
+
+
+def main():
+    if 'initialized_chatpage' not in st.session_state or not st.session_state.initialized_chatpage:
+        
+        st.session_state.report_class = extract_keys_from_json("report_category.json")
+        print("st.session_state.report_class",st.session_state.report_class)
+
+        if 'event_id' not in st.session_state:
+            st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
+        
+        data = get_data(st.session_state.event_id)
+        
+        st.session_state.event_data = data["event"]
+        st.session_state.chatlog_id = data["chatlog_id"]
+        st.session_state.chat_log = data["chatlog"]
+        st.session_state.nippo_cat = data["category"]
+
+        print(data)
+        print("st.session_state.event_data",st.session_state.event_data)
+        print("st.session_state.chatlog_id",st.session_state.chatlog_id)
+        print("st.session_state.chat_log",st.session_state.chat_log)
+        print("st.session_state.nippo_cat",st.session_state.nippo_cat)
+
+        if st.session_state.chat_log == []:
+            assistant_msg = "お疲れ様です。今回の営業で同行者はいましたか？"
+            st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
+            add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
+        
+        st.session_state.next_chat = USER_NAME if st.session_state.chat_log[-1]["name"] == ASSISTANT_NAME else ASSISTANT_NAME
+        
+        st.session_state.initialized_chatpage = True
+        
+    page()
     
     with st.sidebar:
         st.title("にっぽー")
@@ -85,52 +98,63 @@ def main():
     
     if reset:
         st.session_state.chat_log = []
-        st.session_state.nippo_cat = ""
-        reset_log(st.session_state.chatlog_id)
+        reset_log(st.session_state.chatlog_id, st.session_state.event_data.get("purpose"))
+        assistant_msg = "お疲れ様です。今回の営業で同行者はいましたか？"
+        st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
+        add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
+        st.session_state.next_chat = USER_NAME
         st.rerun()
     
-    
-    
-    user_msg = st.chat_input("ここにメッセージを入力!")
+    if st.session_state.next_chat == USER_NAME:
+        user_msg = st.chat_input("ここにメッセージを入力!")
 
-    if user_msg or make_nippo or save_nippo:
+        if user_msg or make_nippo or save_nippo:
+            if save_nippo:
+                with st.chat_message(ASSISTANT_NAME):
+                    st.success("日報を保存しました。")
+                nippoId = make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, st.session_state.nippo_cat, st.session_state.chatlog_id)
+                st.session_state.nippo_justmade = nippoId
+                # st.switch_page("pages/editpage.py")
 
-        if save_nippo:
-            user_msg = "日報を保存。"
-            with st.chat_message(USER_NAME):
-                st.write(user_msg)
-            make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, "営業", st.session_state.chatlog_id)
-            assistant_msg = "日報を保存しました。"
 
-        elif make_nippo:
-            user_msg = "日報作成"
-            with st.chat_message(USER_NAME):
-                st.write(user_msg)
-            if len(st.session_state.chat_log) < 2:
-                assistant_msg = "コンテンツがありません"
+            elif make_nippo:
+                if len(st.session_state.chat_log) < 2:
+                    with st.chat_message(ASSISTANT_NAME):
+                        st.warning("コンテンツがありません")
+                else:
+                    user_msg = "日報作成"
+                    with st.chat_message(USER_NAME):
+                        st.write(user_msg)
+
+                    print("st.session_state.chat_log",st.session_state.chat_log)
+                    st.session_state.chat_log.pop()
+                    pop_chatlog(st.session_state.chatlog_id)
+                    if st.session_state.chat_log[-1]["msg"] == "日報作成":
+                        st.session_state.chat_log.pop()
+                        pop_chatlog(st.session_state.chatlog_id)
+                    print("st.session_state.chat_log",st.session_state.chat_log)
+                    
+                    assistant_msg = create_nippo(st.session_state.chat_log, st.session_state.event_data)
+                    print("assistant_msg",assistant_msg)
+                    st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
+                    st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
+                    add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
+                    add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
+                    st.rerun()
+
             else:
-                print("st.session_state.chat_log",st.session_state.chat_log)
-                assistant_msg=create_nippo(st.session_state.chat_log[:-1])
-                st.session_state.chat_log.pop()
-                pop_chatlog(st.session_state.chatlog_id)
-                print("st.session_state.chat_log",st.session_state.chat_log)
-        else:
-            assistant_msg=create_question(st.session_state.chat_log + [{"name": USER_NAME, "msg": user_msg}])
-            with st.chat_message(USER_NAME):
-                st.write(user_msg)
-            
-        st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
+                st.session_state.chat_log.append({"name": USER_NAME, "msg": user_msg})
+                add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
+                st.session_state.next_chat = ASSISTANT_NAME
+                with st.chat_message(USER_NAME):
+                    st.write(user_msg)
+                st.rerun()
+
+    else:
+        assistant_msg = create_question(st.session_state.chat_log, st.session_state.event_data)
         st.session_state.chat_log.append({"name": ASSISTANT_NAME, "msg": assistant_msg})
-
-
-        with st.chat_message(ASSISTANT_NAME):
-            st.write(assistant_msg)
-            
-        print("assistant_msg",assistant_msg)
-        # セッションにチャットログを追加
-        print("st.session_state.chat_log",st.session_state.chat_log)
-        add_chatlog(st.session_state.chatlog_id, {"name": USER_NAME, "msg": user_msg})
         add_chatlog(st.session_state.chatlog_id, {"name": ASSISTANT_NAME, "msg": assistant_msg})
+        st.session_state.next_chat = USER_NAME
         st.rerun()
 
 main()
