@@ -40,15 +40,17 @@ async def main():
     if username == "None":
         st.switch_page("pages/login.py")
     st.title("マイページ")
+    
     st.markdown(
         f"""
         <p class="h2 text-center">
         <hr>
 
         <div class="card-body">
-            <p class="h4">ユーザネーム:{username}</p>
-            <p class="h3">名前：{name}</p>
-            <p class="h3">入社日：2022年4月1日</p>
+            <p class="h5">ユーザネーム:{username}</p>
+            <p class="h3">名前　：{name}</p>
+            <p class="h3">入社日：2020年4月1日</p>
+            <p class="h3">所属　：営業部</p>
         </div>
         <hr>
         """
@@ -60,7 +62,15 @@ async def main():
     # if st.button("他の人が書いた日報を見る"):
     # # クエリパラメータを設定して、search.pyページに遷移
     #     st.switch_page("pages/search_nippo.py")
-
+    bookmarks
+    st.markdown(
+        """
+        <div class="container mt-5">
+        <div class="scrollable-list list-group">
+            <a href="#" class="list-group-item list-group-item-action"></a>
+        </div>
+    </div>
+        """,unsafe_allow_html=True)
     if st.button("イベントを新しく登録"):
         st.switch_page("pages/make_event.py")
     

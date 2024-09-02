@@ -60,8 +60,8 @@ def show_nippo(nippos):
 
         # Initialize the bridge with a unique key for each iteration
         data = bridge(f"nippo-bridge-{nippo_id}", default="No button is clicked", key=f"bridge-key_{nippo_id}")
-        iine_dict[nippo_id]=bridge(f"hand-thumbs-up-fill_{nippo_id}", default="", key=f"bridge-key_i_{nippo_id}")
-        stock_dict[nippo_id]=bridge(f"bookmark_{nippo_id}", default="", key=f"bridge-key_s_{nippo_id}")
+        # iine_dict[nippo_id]=bridge(f"hand-thumbs-up-fill_{nippo_id}", default="", key=f"bridge-key_i_{nippo_id}")
+        # stock_dict[nippo_id]=bridge(f"bookmark_{nippo_id}", default="", key=f"bridge-key_s_{nippo_id}")
         # Define HTML with JavaScript to handle button clicks
         html_tem = nippo_card(username,purpose,customer,src_time,nippo_id,contents)
         html(html_tem, key=f"html-key-{nippo_id}")
