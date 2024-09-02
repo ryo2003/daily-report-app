@@ -7,11 +7,11 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from dotenv import load_dotenv
 import pymongo
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 from models import Nippo
 
 load_dotenv()
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = st.secrets["MONGO_URI"]
 
 
 

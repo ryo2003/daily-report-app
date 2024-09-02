@@ -5,13 +5,13 @@ import streamlit as st
 from bson import ObjectId
 import json
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 
 from chat import create_question, create_nippo, add_chatlog, \
 pop_chatlog, make_nippo_data, extract_keys_from_json, \
 add_catdata, reset_log, get_data
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()

@@ -9,13 +9,13 @@ from pymongo import MongoClient
 
 import time
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from data_fetch import  init_database, fetch_async, get_username,get_client
 from component_list import icon_toggle,icon_emb
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 from dotenv import load_dotenv
 load_dotenv()

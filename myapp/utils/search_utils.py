@@ -5,8 +5,8 @@ import pandas as pd
 from bson import ObjectId
 from st_bridge import bridge, html
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from component_list import nippo_card
 users = set()
@@ -43,7 +43,7 @@ def get_attributes(nippos):
         customers.add(customer)
 
 
-def show_nippo(nippos,sort_type=None):#sort_type = "newest", "oldest", "most_likes"
+def show_nippo(nippos,sort_type=None):#sort_type = "newest", "oldest", "most_likes", "most_saves"
     iine_dict = {}
     stock_dict = {}
     if sort_type:
@@ -85,7 +85,13 @@ def sort_nippo(nippos,sort_type="newest"):
         sort_type = "oldest"
     elif sort_type == "いいねが多い順":
         sort_type = "most_likes"
+    elif sort_type == "ブックマークが多い順":
+        sort_type = "most_saves"
     sorted_list = sorted(nippos,key=lambda x: x.timestamp, reverse=True)
     if(sort_type == "oldest"):
         sorted_list = sorted(nippos,key=lambda x: x.timestamp)
+    elif(sort_type == "most_likes"):
+        sorted_list = sorted(nippos,key=lambda x: len(x.good),reverse=True)
+    elif(sort_type == "most_saves"):
+        sorted_list = sorted(nippos,key=lambda x: len(x.bookmark),reverse=True)
     return sorted_list

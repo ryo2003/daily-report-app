@@ -14,7 +14,7 @@ from utils.vector_search import create_embedding
 load_dotenv()
 
 def save_new_chatlog(user_id: ObjectId, log_data : list[dict], category : str, nippo_id : ObjectId = ObjectId()):
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -35,7 +35,7 @@ def get_data(eventId):
         print("event idがないよー")
         return res
 
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['event']
@@ -90,8 +90,8 @@ def create_question(chatlog: list[dict], other_info : dict) -> str:
     # return 'こんにちは! create_question が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
-    api_key = os.getenv('API_KEY')
-    api_base = os.getenv('API_BASE')
+    api_key = st.secrets["API_KEY"]
+    api_base = st.secrets["API_BASE"]
 
     client = AzureOpenAI(
     api_key =api_key,  
@@ -123,8 +123,8 @@ def create_nippo(chatlog: list[dict], other_info) -> str:
     # return 'こんにちは! create_nippo が呼ばれたよ！' + str(len(chatlog))
     deployment_name = "gpt-4o-mini"  # デプロイ名
     model_name = "gpt-4o-mini"  # モデル名
-    api_key = os.getenv('API_KEY')
-    api_base = os.getenv('API_BASE')
+    api_key = st.secrets["API_KEY"]
+    api_base = st.secrets["API_BASE"]
 
     client = AzureOpenAI(
     api_key =api_key,  
@@ -167,7 +167,7 @@ def create_nippo(chatlog: list[dict], other_info) -> str:
 
 def get_chatlog(chatlogId) -> list:
     print("call get_chatlog!!!!")
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -183,7 +183,7 @@ def get_chatlog(chatlogId) -> list:
     return chatlog.get("log_data", [])
 
 def get_category(chatlogId) -> str:
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -196,7 +196,7 @@ def get_category(chatlogId) -> str:
     return chatlog.get("category", "")
 
 def get_chatlog(eventId) -> ObjectId:
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['event']
@@ -214,7 +214,7 @@ def get_event_info(eventId) -> dict:
     if not eventId:
         return {}
     
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['event']
@@ -227,7 +227,7 @@ def get_event_info(eventId) -> dict:
     return event
 
 def add_catdata(chatlogId, category):
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -238,7 +238,7 @@ def add_chatlog(chatlogId, chatlog):
     if not chatlogId:
         return
     
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -251,7 +251,7 @@ def add_chatlog(chatlogId, chatlog):
     return
 
 def pop_chatlog(chatlogId):
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -265,7 +265,7 @@ def pop_chatlog(chatlogId):
 def reset_log(chatlogId : ObjectId, category : str):
     print("reset_log chatlogId: ",chatlogId)
     print("reset_log category: ",category)
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
     collection = db['chat_log']
@@ -277,7 +277,7 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
     print("make_nippo_data")
     print("nippo: ",nippo)
 
-    mongo_uri = os.getenv('MONGO_URI')
+    mongo_uri = st.secrets["MONGO_URI"]
     client = MongoClient(mongo_uri)
     db = client['mydb']
 

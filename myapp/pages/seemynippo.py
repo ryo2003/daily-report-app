@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from bson import ObjectId
 from search_utils import select_nippo, get_attributes,show_nippo
 import asyncio
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()

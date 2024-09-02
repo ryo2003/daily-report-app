@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 import os
 import sys
 load_dotenv()
-mongo_URI = os.getenv("MONGO_URI")
+mongo_URI = st.secrets["MONGO_URI"]
 client = pymongo.MongoClient(mongo_URI)  # ここでURIを指定
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 from data_fetch import get_id_from_username
 
 db = client["mydb"]  # 使用するデータベース名

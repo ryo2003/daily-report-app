@@ -3,10 +3,10 @@ import os
 import sys
 import json
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 from data_fetch import get_username
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()
@@ -66,7 +66,7 @@ from pymongo import MongoClient
 import os
 import sys
 from dotenv import load_dotenv
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 
 load_dotenv()
 api_key = st.secrets["API_KEY"]

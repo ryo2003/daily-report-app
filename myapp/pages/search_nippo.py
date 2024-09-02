@@ -3,14 +3,14 @@ import pandas as pd
 import sys
 import os
 import json
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from search_utils import show_nippo
 from vector_search import create_embedding, find_similar_documents, get_highest_score_document
 from types import SimpleNamespace
 from bson import ObjectId
 from st_bridge import bridge, html
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()
