@@ -112,7 +112,10 @@ def main():
             if save_nippo:
                 with st.chat_message(ASSISTANT_NAME):
                     st.success("日報を保存しました。")
-                make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, st.session_state.nippo_cat, st.session_state.chatlog_id)
+                nippoId = make_nippo_data(st.session_state.chat_log[-1]['msg'], st.session_state.event_id, st.session_state.nippo_cat, st.session_state.chatlog_id)
+                st.session_state.nippo_justmade = nippoId
+                # st.switch_page("pages/editpage.py")
+
 
             elif make_nippo:
                 if len(st.session_state.chat_log) < 2:

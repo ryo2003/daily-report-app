@@ -334,4 +334,4 @@ def make_nippo_data(nippo : str, eventId : ObjectId, purpose : str, chatlogId : 
         {"$set": {"nippo_id": nippo_id}}
     )
     
-    return
+    return nippo_id
