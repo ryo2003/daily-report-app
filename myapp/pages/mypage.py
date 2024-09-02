@@ -85,28 +85,14 @@ async def main():
         <hr>
         """
         ,unsafe_allow_html=True)
-    list_html=""
+    list_html="<h2>ブックマークした投稿</h2>"
     for info in bookmark_info:
-        nippo_customer=info["customer"]
-        nippo_purpose=info["purpose"]
-        nippo_contents=info["contents"]
-        list_html+=f"""
-                <div class="list-group-item list-group-item-action">
-                    <div>
-                        <p>
-                        {nippo_customer}-{nippo_purpose}
-                        </p>
-                        <p>
-                        {nippo_contents}
-                        </p>
-                    </div>
-                </div>
-                """
-    st.markdown(f"""bookmark
-    <div class="container mt-5">
-        <div class="scrollable-list list-group">{list_html}</div>
-    </div>
-    """,unsafe_allow_html=True)
+        print(info)
+        nippo_customer=info.customer
+        nippo_purpose=info.purpose
+        nippo_contents=info.contents
+        list_html+=f"<div class='list-group-item'>{nippo_customer}-{nippo_purpose}<br>{nippo_contents}<hr></div>"
+    st.markdown(f"<div class='scrollable-list list-group-item-action'>"+list_html,unsafe_allow_html=True)
     
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     calendar_events = parse2fullcal(events_list)
