@@ -43,9 +43,11 @@ def get_attributes(nippos):
         customers.add(customer)
 
 
-def show_nippo(nippos):
+def show_nippo(nippos,sort_type=None):#sort_type = "newest", "oldest", "most_likes"
     iine_dict = {}
     stock_dict = {}
+    if sort_type:
+        nippos = sort_nippo(nippos,sort_type)
     for nippo in nippos:  # Assuming nippos is your data
         username = get_username(nippo.user_id)
         purpose = nippo.purpose
@@ -76,3 +78,14 @@ def show_nippo(nippos):
             #st.success(f"Details fetched for {data}")
             st.switch_page("pages/nippo_detail.py") 
         
+def sort_nippo(nippos,sort_type="newest"):
+    if sort_type == "新しい順":
+        sort_type = "newest"
+    elif sort_type == "古い順":
+        sort_type = "oldest"
+    elif sort_type == "いいねが多い順":
+        sort_type = "most_likes"
+    sorted_list = sorted(nippos,key=lambda x: x.timestamp, reverse=True)
+    if(sort_type == "oldest"):
+        sorted_list = sorted(nippos,key=lambda x: x.timestamp)
+    return sorted_list

@@ -11,6 +11,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/ut
 from data_fetch import get_client, init_database, fetch_async,get_user_info
 from models import Event
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+
+
+
 
 
 def parse2fullcal(events):
@@ -125,5 +131,10 @@ async def main():
         st.switch_page("pages/Event.py")
 
 
+a = "createbyhands"
+hide_side_button()
 
 asyncio.run(main())
+
+
+

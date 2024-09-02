@@ -11,6 +11,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/ut
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
 from data_fetch import  init_database, fetch_async, get_username,get_client
 from component_list import icon_toggle,icon_emb
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
 async def main():
     # ログインしているユーザのid取得
     user_id = st.session_state.get("success_id")
@@ -35,17 +41,18 @@ async def main():
     customer=nippo[0].customer
     event_time = nippo[0].event_time
     timestamp = nippo[0].timestamp
+    purpose = nippo[0].purpose
     author_username = get_username(author_id)
     
     # nippo_idからeventidを取得して、イベント名を取得するコードを書く必要あり
     # 現在は仮のイベント名を入力
-    event_name = "A会社との商談"
+    event_name = customer + ": " + purpose
     iine_data = bridge(f"iine_{nippo_id}", default="")
     stock_data = bridge(f"stock_{nippo_id}", default="")
 
     contents = nippo[0].contents
     st.markdown(f"""
-                <p class="h1">{event_name}の日報</p>
+                <p class="h1">{event_name}</p>
         <div class="d-flex justify-content-between align-items-center">
         <div>
             <div class="d-flex">
@@ -89,6 +96,12 @@ async def main():
     if stock_data:
         st.write(stock_data)
         print("ストックされました")
+    
+    if user_id == author_id:
+        if st.button("編集する"):
+            st.switch_page("pages/editpage.py")
+
+    
         
         
 asyncio.run(main())

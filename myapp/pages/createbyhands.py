@@ -5,10 +5,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/ut
 from data_register import submit_byhands_new,nippo_exist
 from bson import ObjectId
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
 userid = st.session_state.get("success_id")
 
 event_data = st.session_state.get("event_data")
-event_id = event_data["_id"]
+event_id = event_data["id"]
 event_purpose = event_data["extendedProps"]["purpose"]
 company_name = event_data["title"]
 visit_time = event_data["start"]

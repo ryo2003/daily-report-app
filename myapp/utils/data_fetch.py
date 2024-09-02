@@ -72,6 +72,7 @@ async def init_database(client, models=[Nippo]):
     database = client.get_database(name='mydb')
     await init_beanie(database=database, document_models=models)
 
+# e.g. filter = {"user_id": user_id}
 async def fetch_async(filter=None,model=Nippo):
     if filter:
         data = await model.find(filter,fetch_links=True).to_list()

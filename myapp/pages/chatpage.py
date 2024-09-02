@@ -11,10 +11,17 @@ from chat import create_question, create_nippo, add_chatlog, \
 pop_chatlog, make_nippo_data, extract_keys_from_json, \
 add_catdata, reset_log, get_data
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
+from component_list import hide_sidebar, hide_side_button
+
+hide_side_button()
+
+
 # 定数定義
 USER_NAME = "user"
 ASSISTANT_NAME = "assistant"
 MORIAGE_YAKU_NAME ="moriage"
+
 
 avator_img_dict = {
     USER_NAME: "👤",
@@ -65,7 +72,10 @@ def main():
 
         if 'event_id' not in st.session_state:
             st.session_state.event_id = ObjectId('66cd3a672dc71efad9fbd5de')
+        else:
+            st.session_state.event_id = ObjectId(st.session_state.event_id)
         
+        print("st.session_state.event_id",st.session_state.event_id, type(st.session_state.event_id))
         data = get_data(st.session_state.event_id)
         
         st.session_state.event_data = data["event"]
