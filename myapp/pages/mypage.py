@@ -17,8 +17,6 @@ from component_list import hide_sidebar, hide_side_button
 
 
 
-
-
 def parse2fullcal(events):
     fullcalendar_events = []
     for event in events:
@@ -48,34 +46,13 @@ async def main():
 
     st.title("マイページ")
     
-    st.markdown(
-        f"""
-        <p class="h2 text-center">
-        <hr>
-        <div class="card-body">
-            <p class="h5">ユーザネーム:{username}</p>
-            <p class="h3">名前　：{name}</p>
-            <p class="h3">入社日：2020年4月1日</p>
-            <p class="h3">所属　：営業部</p>
-        </div>
-        <hr>
-        """
-        ,unsafe_allow_html=True)
-    st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     # if st.button("自分の書いた日報を見る"):
     #     st.switch_page("pages/seemynippo.py")
     
     # if st.button("他の人が書いた日報を見る"):
     # # クエリパラメータを設定して、search.pyページに遷移
     #     st.switch_page("pages/search_nippo.py")
-    # st.markdown(
-    #     """
-    #     <div class="container mt-5">
-    #     <div class="scrollable-list list-group">
-    #         <a href="#" class="list-group-item list-group-item-action"></a>
-    #     </div>
-    # </div>
-    #     """,unsafe_allow_html=True)
+
     if st.button("イベントを新しく登録"):
         st.switch_page("pages/make_event.py")
     
@@ -86,8 +63,39 @@ async def main():
     except:
         await init_database(client,models=[Event])
         events_list = await fetch_async(filter,model=Event)
+    filter_bookmarks={"_id":{ "$in": bookmarks}}
+    try:
+        bookmark_info= await fetch_async(filter_bookmarks)
+    except:
+        await init_database(client)
+        bookmark_info= await fetch_async(filter_bookmarks)
+        
+        
+    st.markdown(
+        f"""
+        <p class="h2 text-center">
+        <hr>
+
+        <div class="card-body">
+            <p class="h5">ユーザネーム:{username}</p>
+            <p class="h3">名前　：{name}</p>
+            <p class="h3">入社日：2020年4月1日</p>
+            <p class="h3">所属　：営業部</p>
+        </div>
+        <hr>
+        """
+        ,unsafe_allow_html=True)
+    list_html="<h2>ブックマークした投稿</h2>"
+    for info in bookmark_info:
+        print(info)
+        nippo_customer=info.customer
+        nippo_purpose=info.purpose
+        nippo_contents=info.contents
+        list_html+=f"<div class='list-group-item'>{nippo_customer}-{nippo_purpose}<br>{nippo_contents}<hr></div>"
+    st.markdown(f"<div class='scrollable-list list-group-item-action'>"+list_html,unsafe_allow_html=True)
+    
+    st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     calendar_events = parse2fullcal(events_list)
-    print("aaakfherogiah",calendar_events)
     calendar_options = {
         "minTime":'08:00:00',
         "maxTime": '18:00:00', 
