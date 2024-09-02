@@ -39,7 +39,15 @@ def get_username(user_id):
     # Return the username if found, otherwise return None
     return user["user_name"] if user else None
 
-
+def get_user_info(user_id):
+    # Access the users collection
+    users_collection = db["user"]  # Replace with your users collection name
+    
+    # Find the user document that matches the given user_id
+    user = users_collection.find_one({"_id": user_id})
+    
+    # Return the username if found, otherwise return None
+    return user if user else None
     
 def get_id_from_username(username):
     users_collection = db["user"]

@@ -8,7 +8,7 @@ from streamlit_calendar import calendar
 import asyncio
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
-from data_fetch import get_client, init_database, fetch_async,get_username
+from data_fetch import get_client, init_database, fetch_async,get_user_info
 from models import Event
 
 
@@ -32,18 +32,34 @@ def parse2fullcal(events):
 async def main():
 
     user_id = st.session_state.get("success_id")
-    username = str(get_username(user_id))
+    user_info=get_user_info(user_id)
+    username = str(user_info["user_name"])
+    name = str(user_info["Name"])
+    bookmarks=user_info["bookmark"]
     
     if username == "None":
         st.switch_page("pages/login.py")
+    st.title("マイページ")
+    st.markdown(
+        f"""
+        <p class="h2 text-center">
+        <hr>
 
+        <div class="card-body">
+            <p class="h4">ユーザネーム:{username}</p>
+            <p class="h3">名前：{name}</p>
+            <p class="h3">入社日：2022年4月1日</p>
+        </div>
+        <hr>
+        """
+        ,unsafe_allow_html=True)
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
-    if st.button("自分の書いた日報を見る"):
-        st.switch_page("pages/seemynippo.py")
+    # if st.button("自分の書いた日報を見る"):
+    #     st.switch_page("pages/seemynippo.py")
     
-    if st.button("他の人が書いた日報を見る"):
-    # クエリパラメータを設定して、search.pyページに遷移
-        st.switch_page("pages/search_nippo.py")
+    # if st.button("他の人が書いた日報を見る"):
+    # # クエリパラメータを設定して、search.pyページに遷移
+    #     st.switch_page("pages/search_nippo.py")
 
     if st.button("イベントを新しく登録"):
         st.switch_page("pages/make_event.py")
