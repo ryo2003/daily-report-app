@@ -34,6 +34,9 @@ async def main():
     user_id = st.session_state.get("success_id")
     username = str(get_username(user_id))
     
+    if username == "None":
+        st.switch_page("pages/login.py")
+
     st.write("お疲れ様です、"+username+"さん。日報管理システムへようこそ!")
     if st.button("自分の書いた日報を見る"):
         st.switch_page("pages/seemynippo.py")
@@ -42,6 +45,8 @@ async def main():
     # クエリパラメータを設定して、search.pyページに遷移
         st.switch_page("pages/search_nippo.py")
 
+    if st.button("イベントを新しく登録"):
+        st.switch_page("pages/make_event.py")
     
     client = get_client()
     filter={"user_id": user_id}
@@ -85,7 +90,6 @@ async def main():
 
     # eventClick コールバックの処理
     if cal.get("eventClick"):
-        print(cal)
         event_data = cal["eventClick"]["event"]
         st.session_state['show_modal'] = True
         st.session_state['event_data'] = event_data  # イベントデータを保存
