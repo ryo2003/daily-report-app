@@ -56,7 +56,7 @@ async def main():
         "headerToolbar": {
             "left": "today prev,next",
             "center": "title",
-            "right": "list,timelineWeek,dayGridMonth",
+            "right": "list,timeGridWeek,dayGridMonth",
         },
     }
     json_open = open("demo_data.json", 'r')

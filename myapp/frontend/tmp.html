@@ -1,15 +1,11 @@
-<div class="d-flex justify-content-between align-items-center">
-    <div>
-        カテゴリー：<div href="#" class="btn btn-primary" class="text-light">
-            {purpose}</a>
-        </div>
-    </div>
-    <div class="d-flex>
-        <div>
-            {icon_toggle(" hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked"
-        ,color="btn-outline-primary" ,bridge_key=f"bridge-key_i_{nippo_id}")} </div>
-        <div>
-            {icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked",bridge_key=f"bridge-key_b_{nippo_id}")}
-        </div>
-    </div>
-</div>
+if iine_data:
+print(st.session_state.get(f"iine_{nippo_id}_{user_id}"))
+print(not st.session_state.get(f"{nippo_id}_{user_id}"))
+if not st.session_state.get(f"iine_{nippo_id}_{user_id}"):
+    new_bool=True
+    st.session_state[f"iine_{nippo_id}_{user_id}"]=new_bool
+else:     
+    new_bool=False
+    st.write(new_bool)
+    st.session_state[f"iine_{nippo_id}_{user_id}"]=new_bool
+    print(f"{user_id}にいいねが押されました")

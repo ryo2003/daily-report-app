@@ -36,8 +36,8 @@ async def main():
     # nippo_idからeventidを取得して、イベント名を取得するコードを書く必要あり
     # 現在は仮のイベント名を入力
     event_name = "A会社との商談"
-    iine_data = bridge(f"iine_{nippo_id}", default="")
-    stock_data = bridge(f"stock_{nippo_id}", default="")
+    bridge_name=f"{user_id}_{nippo_id}"
+    data = bridge(f"{user_id}_{nippo_id}", default="")
 
     contents = nippo[0].contents
     st.markdown(f"""
@@ -66,11 +66,15 @@ async def main():
     </div>
     <div class="d-flex">
     <div>
-    {icon_toggle("hand-thumbs-up-fill",nippo_id,classes=["mx-1"],click_output="clicked",color="btn-outline-primary")}
+        <input type="checkbox" class="btn-check" id="btn-check-1-outlined" autocomplete="off" {"checked" if st.session_state.get(f"iine_{nippo_id}_{user_id}") == "clicked" else ""}>
+        <label class="btn btn-outline-primary mx-1" for="btn-check-1-outlined" onClick="stBridges.send('{bridge_name}', 'iine')">
+        <i class="bi bi-hand-thumbs-up-fill"></i></label><br>
     </div>
 
     <div>
-    {icon_toggle("bookmark",nippo_id,classes=["mx-1"],click_output="clicked")}
+        <input type="checkbox" class="btn-check" id="btn-check-2-outlined" autocomplete="off" {"checked" if st.session_state.get(f"stock_{nippo_id}_{user_id}") == "clicked" else ""}>
+        <label class="btn btn-outline-secondary mx-1" for="btn-check-2-outlined" onClick="stBridges.send('{bridge_name}', 'stock')">
+        <i class="bi bi-bookmark"></i></label><br>
     </div>
 </div>
 """)
@@ -78,13 +82,26 @@ async def main():
     st.markdown("<hr>",unsafe_allow_html=True)
     st.write(contents)
     # カスタム評価ウィジェットの呼び出し
-    if iine_data:
-        st.write(iine_data)
-        print("いいねが押されました")
-
-    if stock_data:
-        st.write(stock_data)
-        print("ストックされました")
+    if data=="iine":
+        st.write(data)
+        if st.session_state.get(f"iine_{nippo_id}_{user_id}") == "clicked":
+            i_flag="unclicked"
+            st.session_state[f"iine_{nippo_id}_{user_id}"]=i_flag
+        else:
+            i_flag="clicked"
+            st.session_state[f"iine_{nippo_id}_{user_id}"]=i_flag
+            print(f"{user_id}にいいねが押されました")
+        st.write("iine",i_flag)            
+        
+    elif data=="stock":
+        if st.session_state.get(f"stock_{nippo_id}_{user_id}") == "clicked":
+            s_flag = "unclicked"
+            st.session_state[f"stock_{nippo_id}_{user_id}"]=s_flag
+        else:     
+            s_flag="clicked"
+            st.session_state[f"stock_{nippo_id}_{user_id}"]=s_flag
+            print(f"{user_id}にstockが押されました")
+        st.write("stock",s_flag)
         
         
 asyncio.run(main())

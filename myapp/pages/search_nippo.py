@@ -88,7 +88,6 @@ def get_attributes(nippos):
 # Main async function to run the app
 async def main():
 
-
     client = get_client()
     await init_database(client)
     
