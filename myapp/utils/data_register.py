@@ -102,9 +102,10 @@ def insert_event(user_id, company_name, start_time, end_time, address, purpose):
     event_id = result.inserted_id
     
     new_chatlog = {
-        "user_id":ObjectId(user_id),
-        "event_id":ObjectId(event_id),
-        "event":[]
+        "user_id": ObjectId(user_id),
+        "event_id": ObjectId(event_id),
+        "log_data": [],
+        "category": purpose,
     }
 
     chatlog_result = chatlogs.insert_one(new_chatlog)
