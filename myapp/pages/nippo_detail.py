@@ -19,7 +19,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/fr
 from component_list import hide_sidebar, hide_side_button
 from dotenv import load_dotenv
 load_dotenv()
-mongo_URI = os.getenv("MONGO_URI")
+mongo_URI = st.secrets["MONGO_URI"]
 client = MongoClient(mongo_URI)
 db = client["mydb"]
 collection = db["nippo"]

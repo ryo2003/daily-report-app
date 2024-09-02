@@ -69,9 +69,9 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
 load_dotenv()
-api_key = os.getenv("API_KEY")
-MONGO_URI = os.getenv("MONGO_URI")
-api_base = os.getenv("API_BASE")
+api_key = st.secrets["API_KEY"]
+MONGO_URI = st.secrets["MONGO_URI"]
+api_base = st.secrets["API_BASE"]
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client["mydb"]

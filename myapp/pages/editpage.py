@@ -10,7 +10,7 @@ from models import Nippo
 from pymongo import MongoClient
 from data_fetch import fetch_async,get_client,init_database
 import asyncio
-mongo_URI = os.getenv("MONGO_URI")
+mongo_URI = st.secrets["MONGO_URI"]
 client = MongoClient(mongo_URI)
 db = client["mydb"]
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))

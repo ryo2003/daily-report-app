@@ -14,7 +14,7 @@ from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()
 
-mongo_URI = os.getenv("MONGO_URI")
+mongo_URI = st.secrets["MONGO_URI"]
 client = MongoClient(mongo_URI)
 db = client["mydb"]
 events = db["event"]
