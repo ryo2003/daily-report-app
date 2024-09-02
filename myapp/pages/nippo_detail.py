@@ -23,19 +23,25 @@ mongo_URI = os.getenv("MONGO_URI")
 client = MongoClient(mongo_URI)
 db = client["mydb"]
 collection = db["nippo"]
+user = db["user"]
 
 hide_side_button()
 
-def update_likes(nippo_id, new_likes):
+def update_likes(nippo_id,new_likes):
     collection.update_one(
         {"_id": ObjectId(nippo_id)},
         {"$set": {"good": new_likes}}
     )
+    
 
-def update_bookmarks(nippo_id, new_bookmarks):
+def update_bookmarks(nippo_id, user_id, new_bookmarks, new_nippos):
     collection.update_one(
         {"_id": ObjectId(nippo_id)},
         {"$set": {"bookmark": new_bookmarks}}
+    )
+    user.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"bookmark": new_nippos}}
     )
 
 def on_button_click():
@@ -133,6 +139,7 @@ async def main():
 
         # Retrieve the document once
     document = collection.find_one({"_id": ObjectId(nippo_id)})
+    booked_nippos = user.find_one({"_id": ObjectId(user_id)})
 
     # Initialize state from the document
     like = user_id in document["good"]
@@ -160,15 +167,20 @@ async def main():
     if stock and not st.session_state.get("stock", False):
         new_bookmarks = document["bookmark"]
         new_bookmarks.append(user_id)
-        update_bookmarks(nippo_id,new_bookmarks)
+        new_saves = booked_nippos["bookmark"]
+        new_saves.append(nippo_id)
+        update_bookmarks(nippo_id,user_id,new_bookmarks,new_saves)
         st.session_state["stock"] = True
 
 
     elif not stock and st.session_state.get("stock", False):
         new_bookmarks = document["bookmark"]
+        new_saves = booked_nippos["bookmark"]
         if user_id in new_bookmarks:
             new_bookmarks.remove(user_id)
-            update_bookmarks(nippo_id,new_bookmarks)
+            if nippo_id in new_saves:
+                new_saves.remove(nippo_id)
+            update_bookmarks(nippo_id,user_id,new_bookmarks,new_saves)
         st.session_state["stock"] = False
 
         
