@@ -7,6 +7,8 @@ import asyncio
 from st_bridge import bridge, html
 from pymongo import MongoClient
 
+import time
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/utils/')))
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/app/frontend/')))
@@ -20,8 +22,21 @@ load_dotenv()
 mongo_URI = os.getenv("MONGO_URI")
 client = MongoClient(mongo_URI)
 db = client["mydb"]
+collection = db["nippo"]
 
 hide_side_button()
+
+def update_likes(nippo_id, new_likes):
+    collection.update_one(
+        {"_id": ObjectId(nippo_id)},
+        {"$set": {"good": new_likes}}
+    )
+
+def update_bookmarks(nippo_id, new_bookmarks):
+    collection.update_one(
+        {"_id": ObjectId(nippo_id)},
+        {"$set": {"bookmark": new_bookmarks}}
+    )
 
 def on_button_click():
     st.session_state['clicked'] = True
@@ -116,50 +131,45 @@ async def main():
             st.switch_page("pages/editpage.py")
 
 
-    like = st.toggle("like")
-    stock = st.toggle("stock")
-    collection = db["nippo"]
+        # Retrieve the document once
+    document = collection.find_one({"_id": ObjectId(nippo_id)})
 
-    if user_id in collection.find_one({"_id": ObjectId(nippo_id)})["good"]:
-        like = True
-    
-    if user_id in collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]:
-        stock = True
-    
-    if like:
-        new_likes = collection.find_one({"_id": ObjectId(nippo_id)})["good"]
-        st.session_state["like"] = True
+    # Initialize state from the document
+    like = user_id in document["good"]
+    stock = user_id in document["bookmark"]
+
+    # Create checkboxes
+    like = st.checkbox("Like", value=like)
+    stock = st.checkbox("Bookmark", value=stock)
+
+    # Handle like toggle
+    if like and not st.session_state.get("like", False):
+        new_likes = document["good"]
         new_likes.append(user_id)
-        collection.update_one(
-            {"_id": ObjectId(nippo_id)},
-            {"$set": {"good": new_likes}}
-        )
+        update_likes(nippo_id,new_likes)
+        st.session_state["like"] = True
 
-    else:
-        new_likes = collection.find_one({"_id": ObjectId(nippo_id)})["good"]
+    elif not like and st.session_state.get("like", False):
+        new_likes = document["good"]
+        if user_id in new_likes:
+            new_likes.remove(user_id)
+            update_likes(nippo_id,new_likes)
         st.session_state["like"] = False
-        new_likes.remove(user_id)
-        collection.update_one(
-            {"_id": ObjectId(nippo_id)},
-            {"$set": {"good": new_likes}}
-        )
-    if stock:
-        new_bookmarks = collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]
-        st.session_state["stock"] = True
-        new_bookmarks.append(user_id)
-        collection.update_one(
-            {"_id": ObjectId(nippo_id)},
-            {"$set": {"bookmark": new_likes}}
-        )
-    else:
-        new_bookmarks = collection.find_one({"_id": ObjectId(nippo_id)})["bookmark"]
-        st.session_state["stock"] = False
-        new_bookmarks.remove(ObjectId(user_id))
 
-        collection.update_one(
-            {"_id": ObjectId(nippo_id)},
-            {"$set": {"bookmark": new_likes}}
-        )
+    # Handle bookmark toggle
+    if stock and not st.session_state.get("stock", False):
+        new_bookmarks = document["bookmark"]
+        new_bookmarks.append(user_id)
+        update_bookmarks(nippo_id,new_bookmarks)
+        st.session_state["stock"] = True
+
+
+    elif not stock and st.session_state.get("stock", False):
+        new_bookmarks = document["bookmark"]
+        if user_id in new_bookmarks:
+            new_bookmarks.remove(user_id)
+            update_bookmarks(nippo_id,new_bookmarks)
+        st.session_state["stock"] = False
 
         
 asyncio.run(main())
