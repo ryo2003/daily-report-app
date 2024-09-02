@@ -15,6 +15,9 @@ if st.session_state.get('event_data'):
     start_time = event_data['start']
     end_time = event_data['end']
     adress = event_data["extendedProps"]["address"]
+
+
+    st.session_state["event_id"] = id
     # st.map(location.latitude,location.longitude)
     # event_id = event_data["event_id"]
     st.title(f"イベント:{title}")
@@ -82,6 +85,7 @@ tabindex="0"
             st.switch_page("pages/createbyhands.py")
         elif toggle == 'taiwa':
             # insert_chat()
+            st.session_state.initialized_chatpage = False
             st.switch_page("pages/chatpage.py")
 
 else:
