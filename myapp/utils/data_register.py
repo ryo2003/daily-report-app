@@ -2,7 +2,7 @@ import os, sys
 from bson import ObjectId
 import streamlit as st
 from pymongo import MongoClient
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/utils/')))
 from vector_search import create_embedding
 from dotenv import load_dotenv
 load_dotenv()

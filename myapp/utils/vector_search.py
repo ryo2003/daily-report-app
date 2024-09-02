@@ -6,7 +6,7 @@ from pymongo import MongoClient
 import os
 import sys
 from dotenv import load_dotenv
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/utils/')))
 
 load_dotenv()
 api_key = st.secrets["API_KEY"]

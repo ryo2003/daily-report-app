@@ -5,8 +5,8 @@ import pandas as pd
 from bson import ObjectId
 from st_bridge import bridge, html
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/frontend/')))
 from data_fetch import get_nippo, get_username, get_user, get_client, init_database, fetch_async
 from component_list import nippo_card
 users = set()

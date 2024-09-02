@@ -1,7 +1,7 @@
 import streamlit as st
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/utils/')))
 from login_utils import login, check_correctpassword
 
 st.set_page_config(page_title="Streamlit App", page_icon=":shark:")

@@ -4,11 +4,11 @@ import streamlit as st
 from streamlit_calendar import calendar
 from st_bridge import bridge, html
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/utils/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/utils/')))
 
 from data_register import insert_chat
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/deploy/frontend/')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/mount/src/nippo/myapp/frontend/')))
 from component_list import hide_sidebar, hide_side_button
 
 hide_side_button()
