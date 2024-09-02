@@ -97,9 +97,7 @@ async def main():
             "right": "list,dayGridWeek,dayGridMonth",
         },
     }
-    json_open = open("demo_data.json", 'r')
-    calendar_events_b = json.load(json_open)
-    print(calendar_events,calendar_events_b)
+
     custom_css="""
         .fc-event-past {
             opacity: 0.8;
