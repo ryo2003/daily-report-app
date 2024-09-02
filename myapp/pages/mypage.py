@@ -68,15 +68,14 @@ async def main():
     # if st.button("他の人が書いた日報を見る"):
     # # クエリパラメータを設定して、search.pyページに遷移
     #     st.switch_page("pages/search_nippo.py")
-    bookmarks
-    st.markdown(
-        """
-        <div class="container mt-5">
-        <div class="scrollable-list list-group">
-            <a href="#" class="list-group-item list-group-item-action"></a>
-        </div>
-    </div>
-        """,unsafe_allow_html=True)
+    # st.markdown(
+    #     """
+    #     <div class="container mt-5">
+    #     <div class="scrollable-list list-group">
+    #         <a href="#" class="list-group-item list-group-item-action"></a>
+    #     </div>
+    # </div>
+    #     """,unsafe_allow_html=True)
     if st.button("イベントを新しく登録"):
         st.switch_page("pages/make_event.py")
     
