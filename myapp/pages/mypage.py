@@ -45,13 +45,13 @@ async def main():
     
     if username == "None":
         st.switch_page("pages/login.py")
+
     st.title("マイページ")
     
     st.markdown(
         f"""
         <p class="h2 text-center">
         <hr>
-
         <div class="card-body">
             <p class="h5">ユーザネーム:{username}</p>
             <p class="h3">名前　：{name}</p>
